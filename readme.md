@@ -18,9 +18,9 @@ Gray background in hint for visualization.
 <img src="./src/sample/6.jpg" width="800">  
 
 # GUI
-<img src="./src/GUI/1.jpeg" width="250">
-<img src="./src/GUI/2.jpeg" width="250">
-<img src="./src/GUI/3.jpeg" width="250">  
+<img src="./src/GUI/1.jpeg" width="800">
+<img src="./src/GUI/2.jpeg" width="800">
+<img src="./src/GUI/3.jpeg" width="800">  
 
 
 # Requirements  
