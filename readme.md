@@ -1,6 +1,6 @@
 # PaintsTensorFlow 
 ### [PaintsChainer](https://github.com/taizan/PaintsChainer/) by Tensorflow
-<img src="./src/GUI/3.jpeg" width="800">
+<img src="./src/GUI/0.jpeg" width="800">
 
 # Model Structure
 <img src="./src/model structure/Model 01.jpeg" width="800">
