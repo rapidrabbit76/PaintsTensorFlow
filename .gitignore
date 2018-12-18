@@ -1,0 +1,14 @@
+## Training dir
+ckpt/
+log/
+
+## model
+*.h5
+*.data-*
+chekpoint
+*.meta
+
+## etc
+/__pycache__
+/venv
+/.idea
