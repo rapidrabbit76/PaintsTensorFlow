@@ -20,6 +20,7 @@ class PaintsTensorFlowTrain_128:
         self.dataSets = Datasets(batch_size=hp.batch_size)
         self.modelName = "{}_resize:{}".format(modelName, 128)
         base = os.path.join("./ckpt", self.modelName)
+        utils.mkdir("./ckpt")
         utils.mkdir(base)
         utils.mkdir(os.path.join(base, "board"))
         utils.mkdir(os.path.join(base, "image"))
@@ -31,13 +32,13 @@ class PaintsTensorFlowTrain_128:
         self.ckptPath = "./ckpt/{}/".format(self.modelName) + "ckpt_E:{}"
         self.ckptPrefix = os.path.join(self.ckptPath, "model_GS:{}")
 
-        self.genrator = Generator()
+        self.generator = Generator()
         self.discriminator = Discriminator()
 
         self.logWriter = tf.contrib.summary.create_file_writer("./ckpt/{}/board/log".format(self.modelName))
         self.logWriter.set_as_default()
 
-        self.checkPoint = tf.train.Checkpoint(genrator=self.genrator,
+        self.checkPoint = tf.train.Checkpoint(generator=self.generator,
                                               genOptimizer=self.genOptimizer,
                                               disOptimizer=self.disOptimizer,
                                               discriminator=self.discriminator,
@@ -134,24 +135,24 @@ class PaintsTensorFlowTrain_128:
             for image, line, hint in tqdm(train_sets, total=hp.batch_steps):
                 # get loss
                 with tf.GradientTape() as genTape, tf.GradientTape() as discTape:
-                    predImage = self.genrator(line, hint, training=True)
+                    predImage = self.generator(line, hint, training=True)
                     disReal = self.discriminator(image, training=True)
                     disFake = self.discriminator(predImage, training=True)
 
-                    genratorLoss = self._generator_loss(disFake, predImage, image)
+                    generatorLoss = self._generator_loss(disFake, predImage, image)
                     discriminatorLoss = self._discriminator_loss(disReal, disFake)
 
                 # Training
-                genrator_gradients = genTape.gradient(genratorLoss, self.genrator.variables)
+                generator_gradients = genTape.gradient(generatorLoss, self.generator.variables)
                 discriminator_gradients = discTape.gradient(discriminatorLoss, self.discriminator.variables)
 
                 self.disOptimizer.apply_gradients(zip(discriminator_gradients, self.discriminator.variables))
-                self.genOptimizer.apply_gradients(zip(genrator_gradients, self.genrator.variables),
+                self.genOptimizer.apply_gradients(zip(generator_gradients, self.generator.variables),
                                                   global_step=self.globalSteps)
                 gs = self.globalSteps.numpy()
 
                 if gs % hp.log_interval == 0:
-                    log("LOSS_G", genratorLoss)
+                    log("LOSS_G", generatorLoss)
                     log("LOSS_G_Image", self.imageLoss)
                     log("LOSS_G_GAN", self.ganLoss)
                     log("LOSS_G_LineLoss", self.lineLoss)
@@ -161,7 +162,7 @@ class PaintsTensorFlowTrain_128:
 
                     if gs % hp.sampleing_interval == 0:
                         for image, line, hint in test_sets.take(1):
-                            self.predImage(self.genrator, image, line, hint, epoch)
+                            self.predImage(self.generator, image, line, hint, epoch)
 
                     if gs % hp.save_interval == 0:
                         self.checkPoint.save(file_prefix=self.ckptPrefix.format(epoch, gs))
@@ -169,9 +170,9 @@ class PaintsTensorFlowTrain_128:
                               .format(epoch, gs))
             self.checkPoint.save(file_prefix=self.ckptPrefix.format(epoch, gs))
 
-        self.genrator.summary()
-        ckpt = tf.train.Checkpoint(genrator_128=self.genrator)
-        ckpt.save(file_prefix="./ckpt/" + self.modelName + "/genrator_128")
+        self.generator.summary()
+        ckpt = tf.train.Checkpoint(generator_128=self.generator)
+        ckpt.save(file_prefix="./ckpt/" + self.modelName + "/generator_128")
         self.checkPoint.save(file_prefix=self.ckptPrefix.format("Done", gs))
         print("------------------------------Training Done-------------------------------------")
 
@@ -191,13 +192,13 @@ class PaintsTensorFlowTrain_512:
         self.ckptPath = "./ckpt/{}/".format(self.modelName) + "ckpt_E:{}"
         self.ckptPrefix = os.path.join(self.ckptPath, "model_GS:{}")
 
-        self.genrator_128 = Generator()
-        self.genrator_512 = Generator()
+        self.generator_128 = Generator()
+        self.generator_512 = Generator()
 
         self.logWriter = tf.contrib.summary.create_file_writer("./ckpt/{}/board/log".format(self.modelName))
         self.logWriter.set_as_default()
-        self.checkPoint = tf.train.Checkpoint(genrator_128=self.genrator_128,
-                                              genrator_512=self.genrator_512,
+        self.checkPoint = tf.train.Checkpoint(generator_128=self.generator_128,
+                                              generator_512=self.generator_512,
                                               optimizer=self.optimizer,
                                               globalSteps=self.globalSteps)
 
@@ -246,7 +247,7 @@ class PaintsTensorFlowTrain_512:
         train_sets, test_sets = self.dataSets.buildDataSets()
         log = self._loging
 
-        ckpt = tf.train.Checkpoint(genrator_128=self.genrator_128)
+        ckpt = tf.train.Checkpoint(generator_128=self.generator_128)
         ckpt.restore(tf.train.latest_checkpoint("./ckpt/PaintsTensorFlow_resize:128/gen_128"))
         self.checkPoint.restore(tf.train.latest_checkpoint(self.ckptPath.format(loadEpochs)))
 
@@ -259,14 +260,14 @@ class PaintsTensorFlowTrain_512:
 
             for line_128, hint_128, image, line, hint in tqdm(train_sets, total=hp.batch_steps):
                 hint = hint.numpy()
-                hint = self.buildHint(self.genrator_128, line_128, hint_128)
+                hint = self.buildHint(self.generator_128, line_128, hint_128)
 
                 with tf.GradientTape() as tape:
-                    genOut = self.genrator_512(line, hint, training=True)
+                    genOut = self.generator_512(line, hint, training=True)
                     loss = self.loss(genOut, image)
                 # Training
-                gradients = tape.gradient(loss, self.genrator_512.variables)
-                self.optimizer.apply_gradients(zip(gradients, self.genrator_512.variables),
+                gradients = tape.gradient(loss, self.generator_512.variables)
+                self.optimizer.apply_gradients(zip(gradients, self.generator_512.variables),
                                                global_step=self.globalSteps)
                 gs = self.globalSteps.numpy()
                 if gs % hp.log_interval == 0:
@@ -275,8 +276,8 @@ class PaintsTensorFlowTrain_512:
                     if gs % hp.sampleing_interval == 0:
                         for line_128, hint_128, image, line, hint in test_sets.take(1):
                             hint = hint.numpy()
-                            hint = self.buildHint(self.genrator_128, line_128, hint_128, hint)
-                            self.predImage(self.genrator_512, image, line, hint, epoch)
+                            hint = self.buildHint(self.generator_128, line_128, hint_128, hint)
+                            self.predImage(self.generator_512, image, line, hint, epoch)
 
                     if gs % hp.save_interval == 0:
                         self.checkPoint.save(file_prefix=self.ckptPrefix.format(epoch, gs))
@@ -288,14 +289,14 @@ class PaintsTensorFlowTrain_512:
         self.checkPoint.save(file_prefix=self.ckptPrefix.format("Done", self.globalSteps.numpy()))
         print("------------------------------Training Done-------------------------------------")
 
-        print("------------------------------genrator_128.summary -------------------------------------")
-        self.genrator_128.summary()
-        print("------------------------------genrator_512.summary -------------------------------------")
-        self.genrator_512.summary()
+        print("------------------------------generator_128.summary -------------------------------------")
+        self.generator_128.summary()
+        print("------------------------------generator_512.summary -------------------------------------")
+        self.generator_512.summary()
 
-        ckpt = tf.train.Checkpoint(genrator_128=self.genrator_128,
-                                   genrator_512=self.genrator_512)
-        ckpt.save(file_prefix="./ckpt/" + self.modelName + "/genrator")
+        ckpt = tf.train.Checkpoint(generator_128=self.generator_128,
+                                   generator_512=self.generator_512)
+        ckpt.save(file_prefix="./ckpt/" + self.modelName + "/generator")
         print("------------------------------Training Done-------------------------------------")
 
 
@@ -305,8 +306,8 @@ class PaintsTensorflowTest:
         self.pre_generator = Generator(resize=True, name="predPaintsTensorFlow")
         self.generator = Generator(name="PaintsTensorFlow", convertUint8=True)
         path = "./ckpt/PaintsTensorFlow_resize:512/model"
-        ckpt = tf.train.Checkpoint(genrator_128=self.pre_generator,
-                                   genrator_512=self.generator)
+        ckpt = tf.train.Checkpoint(generator_128=self.pre_generator,
+                                   generator_512=self.generator)
         ckpt.restore(tf.train.latest_checkpoint(path))
 
     def test_eager_mode(self):
