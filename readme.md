@@ -51,14 +51,14 @@ and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/vi
 - #### datasets path structure (**image-line fileName must be matched**)
         ├─ root
         │    ├─ train
-        │    │    ├─ image (hyperparameter: train_image_datasets_path)
+        │    │    ├─ image (hyperparameter: train_image_datasets_path, ex: path/*.*)
         │    │    │    └─ 1.jpg, 2.jpg, 3.jpg 
-        │    │    ├─ line  (hyperparameter: train_line_datasets_path)
+        │    │    ├─ line  (hyperparameter: train_line_datasets_path, ex: path/*.*)
         │    │    │    └─ 1.jpg, 2.jpg, 3.jpg
         │    ├─ test
-        │    │    ├─ image (hyperparameter: test_image_datasets_path)
+        │    │    ├─ image (hyperparameter: test_image_datasets_path, ex: path/*.*)
         │    │    │    └─ 1.jpg, 2.jpg, 3.jpg
-        │    │    └─ line  (hyperparameter: test_line_datasets_path)
+        │    │    └─ line  (hyperparameter: test_line_datasets_path, ex: path/*.*)
         │    │         └─ 1.jpg, 2.jpg, 3.jpg
         
 - ### step 1: Training draft model 128X128 size **Total 10 epoch**
