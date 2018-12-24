@@ -66,13 +66,13 @@ and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/vi
 
         1.1. python3 training.py -loadEpochs 0 -mode draft
 
+    hyperparameter.py : lr =  1e-4 , epoch = 5 , batch_size = in my case 16 recommendation is 4  
 
-    hyperparameter: lr =  1e-4 , epoch = 5 , batch_size = in my case 16 recommendation is 4  
 
         1.2. python3 training.py -loadEpochs 4 -mode draft
 
 
-    hyperparameter: lr =  1e-5 , epoch = 5 , batch_size = same as step 1.1
+    hyperparameter.py : lr =  1e-5 , epoch = 5 , batch_size = same as step 1.1
     
 - ### step 2: Training model 512x512 size **Total 2 epoch**
 
@@ -80,12 +80,12 @@ and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/vi
         2.1. python3 training.py -loadEpochs 0 -mode 512
 
 
-    hyperparameter: lr =  1e-4 , epoch = 1 , batch_size = in my case 3 recommendation is 4
+    hyperparameter.py : lr =  1e-4 , epoch = 1 , batch_size = in my case 3 recommendation is 4
 
         2.2. python3 training.py -loadEpochs 0 -mode 512
 
 
-    hyperparameter: lr =  1e-5 , epoch = 1 , batch_size = same as step 2.1
+    hyperparameter.py : lr =  1e-5 , epoch = 1 , batch_size = same as step 2.1
 
 
 # Loss
