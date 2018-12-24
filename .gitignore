@@ -10,5 +10,5 @@ chekpoint
 
 ## etc
 /__pycache__
-/venv
+/venv*
 /.idea
