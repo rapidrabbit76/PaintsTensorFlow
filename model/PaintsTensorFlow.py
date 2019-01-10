@@ -31,7 +31,7 @@ class Generator(keras.Model):
         self.resize = resize
         self.convertUint8 = convertUint8
 
-    # if use Eager Mode
+    # enable if use Eager Mode
     # @tf.contrib.eager.defun
     def call(self, line, hint, training):
         inputs = tf.concat([line, hint], -1)
@@ -62,7 +62,7 @@ class Generator(keras.Model):
 
         if self.convertUint8 is not None:
             last = (last + 1) * 127.5
-            last = tf.cast(last,tf.uint8,name="output")
+            last = tf.cast(last, tf.uint8, name="output")
 
         return last
 
@@ -78,11 +78,12 @@ class Discriminator(keras.Model):
         self.h4 = DiscConv2d(hp.df_dim * 2, 4, 2)
         self.h5 = DiscConv2d(hp.df_dim * 2, 3, 1)
         self.h6 = DiscConv2d(hp.df_dim * 4, 4, 2)
-        self.pad = L.ZeroPadding2D()
-        self.last = L.Conv2D(1, 4, 1, kernel_initializer=tf.random_normal_initializer(0., 0.02))
+        self.pad = keras.layers.ZeroPadding2D()
+        self.last = keras.layers.Conv2D(1, 4, 1, kernel_initializer=tf.random_normal_initializer(0., 0.02))
 
+    # enable if use Eager Mode
     # if use Eager Mode
-    # @tf.contrib.eager.defun
+    @tf.contrib.eager.defun
     def call(self, inputs, training):
         tensor = self.h0(inputs, training)
         tensor = self.h1(tensor, training)

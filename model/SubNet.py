@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow.keras.layers as L
+from tensorflow import keras
 
 
 class genConv2dLayer(tf.keras.Model):
@@ -9,12 +9,12 @@ class genConv2dLayer(tf.keras.Model):
         self.applyBn = applyBatNorm
         initializer = tf.random_normal_initializer(0., 0.02)
         filters = int(filters)
-        self.conv = L.Conv2D(filters=filters, kernel_size=k, strides=s, padding="SAME",
-                             kernel_initializer=initializer)
+        self.conv = keras.layers.Conv2D(filters=filters, kernel_size=k, strides=s, padding="SAME",
+                                        kernel_initializer=initializer)
         if self.applyBn:
-            self.bn = L.BatchNormalization(momentum=0.9,
-                                           epsilon=1e-5,
-                                           scale=True)
+            self.bn = keras.layers.BatchNormalization(momentum=0.9,
+                                                      epsilon=1e-5,
+                                                      scale=True)
 
     def call(self, inputs, training):
         tensor = self.conv(inputs)
@@ -32,11 +32,11 @@ class genDeConv2dLayer(tf.keras.Model):
         initializer = tf.random_normal_initializer(0., 0.02)
         self.concat = tf.concat
         filters = int(filters)
-        self.up_conv = L.Conv2DTranspose(filters=filters, kernel_size=k, strides=s, padding="SAME",
-                                         kernel_initializer=initializer)
-        self.bn = L.BatchNormalization(momentum=0.9,
-                                       epsilon=1e-5,
-                                       scale=True)
+        self.up_conv = keras.layers.Conv2DTranspose(filters=filters, kernel_size=k, strides=s, padding="SAME",
+                                                    kernel_initializer=initializer)
+        self.bn = keras.layers.BatchNormalization(momentum=0.9,
+                                                  epsilon=1e-5,
+                                                  scale=True)
 
     def call(self, x1, x2, training):
         inputs = self.concat([x1, x2], -1)
@@ -52,12 +52,12 @@ class DiscConv2d(tf.keras.Model):
         self.applyBn = applyBatNorm
         initializer = tf.random_normal_initializer(0., 0.02)
         filters = int(filters)
-        self.conv = L.Conv2D(filters=filters, kernel_size=k, strides=s, padding="SAME",
-                             kernel_initializer=initializer)
+        self.conv = keras.layers.Conv2D(filters=filters, kernel_size=k, strides=s, padding="SAME",
+                                        kernel_initializer=initializer)
         if self.applyBn:
-            self.bn = L.BatchNormalization(momentum=0.9,
-                                           epsilon=1e-5,
-                                           scale=True)
+            self.bn = keras.layers.BatchNormalization(momentum=0.9,
+                                                      epsilon=1e-5,
+                                                      scale=True)
 
     def call(self, inputs, training):
         tensor = self.conv(inputs)

@@ -1,4 +1,4 @@
-from Training.PaintsTensorFlowTraining import PaintsTensorFlowTrain_512, PaintsTensorflowTest, PaintsTensorFlowTrain_128
+from Training.PaintsTensorFlowTraining import PaintsTensorFlowTrain_512, PaintsTensorFlowTrain_128
 import argparse
 
 if __name__ == '__main__':

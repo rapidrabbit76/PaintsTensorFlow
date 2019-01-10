@@ -35,7 +35,7 @@ Gray background in hint for visualization.
 
 # Install  
 1. pip install -r requirements.txt
-2. Download pretrained models [PaintsTensorFlow](https://drive.google.com/file/d/1uzLbfUeG8qnrv2zWemTmK0fp_VupExCe/view?usp=sharing)
+2. Download pretrained models [PaintsTensorFlow](https://drive.google.com/file/d/1POMHzS1Itz39dpYzcWrvAVjw4pb5knCv/view?usp=sharing)
 and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/view?usp=sharing)
     - **Liner** is **SketchKeras** model
 3. Copy the files in **PaintsTensorFlow** into **"./GUI/model/PaintsTensorFlow/"**, and

@@ -62,12 +62,23 @@ class Datasets:
         image = (image / 127.5) - 1
         return image
 
+    def __line_threshold(self, line):
+        if np.random.rand() < 0.3:
+            line = np.reshape(line, newshape=(512, 512))
+            _, line = cv2.threshold(line, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            line = np.reshape(line, newshape=(512, 512, 1))
+        return line
+
     def loadImage(self, imagePath, linePath, train):
         image = tf.read_file(imagePath)
         image = tf.image.decode_jpeg(image, channels=3)
 
         line = tf.read_file(linePath)
         line = tf.image.decode_jpeg(line, channels=1)
+        line_shape = line.shape
+
+        line = tf.py_func(self.__line_threshold, [line], tf.uint8)
+        line.set_shape(line_shape)
 
         image = tf.image.resize_images(image, (128, 128), method=3)
         line = tf.image.resize_images(line, (128, 128), method=3)
@@ -88,7 +99,7 @@ class Datasets:
             line = glob(line)
             line.sort()
 
-            if shuffle == False and isTrain == False:
+            if shuffle is False and isTrain is False:
                 image.reverse()
                 line.reverse()
 
@@ -96,7 +107,10 @@ class Datasets:
             datasets = tf.data.Dataset.from_tensor_slices((image, line))
             datasets = datasets.map(lambda x, y: self.loadImage(x, y, isTrain))
             datasets = datasets.batch(self.batch_size)
-            if shuffle: datasets = datasets.shuffle(100)
+
+            if shuffle:
+                datasets = datasets.shuffle(100)
+
             return datasets
 
         testDatasets = build_dataSets(hp.test_image_datasets_path,
@@ -168,5 +182,7 @@ class Datasets_512(Datasets):
         hint_128 = tf.py_func(self._buildHint,
                               [image_128],
                               tf.float32)
+        hint_128.set_shape(shape=image_128.shape)
+        hint = tf.image.resize_images(hint_128, (512, 512), method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
 
-        return line_128, hint_128, image, line
+        return line_128, hint_128, image, line, hint

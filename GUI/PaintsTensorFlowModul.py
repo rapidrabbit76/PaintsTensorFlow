@@ -35,12 +35,12 @@ class PaintsTensorFlowModul:
         '''
 
         pre_generator = Generator(resize=True, name="predPaintsTensorFlow")
-        generator = Generator(name="PaintsTensorFlow", convertUint8=True)
         line = keras.Input(shape=(128, 128, 1), dtype=tf.float32, name="input_line_128")
         hint = keras.Input(shape=(128, 128, 3), dtype=tf.float32, name="input_hint_128")
         outputs = pre_generator(line, hint, False)
         self.pred_model = keras.Model(inputs=[line, hint], outputs=outputs)
 
+        generator = Generator(name="PaintsTensorFlow", convertUint8=True)
         line = keras.Input(shape=(512, 512, 1), dtype=tf.float32, name="input_line_512")
         hint = keras.Input(shape=(512, 512, 3), dtype=tf.float32, name="input_hint_512")
         outputs = generator(line, hint, False)
@@ -48,8 +48,9 @@ class PaintsTensorFlowModul:
 
         self.sess.run(tf.global_variables_initializer())
 
-        self.pred_model.load_weights(self.pred_model_path)
-        self.model.load_weights(self.model_path)
+        pre_generator.load_weights(self.pred_model_path)
+        generator.load_weights(self.model_path)
+
         self.sketch_keras = SketchKeras(self.sess)
 
     def convert2f32(self, img):
