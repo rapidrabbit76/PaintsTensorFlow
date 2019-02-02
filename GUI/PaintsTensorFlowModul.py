@@ -1,6 +1,7 @@
 import tensorflow as tf
 from GUI.QtUtil import *
-from model.PaintsTensorFlow import Generator
+from model.v1_1_0_b.PaintsTensorFlow import Generator_Draft
+from model.v1.PaintsTensorFlow import Generator
 from tensorflow import keras
 from GUI.SketchKeras import SketchKeras
 
@@ -28,23 +29,24 @@ class PaintsTensorFlowModul:
                 Tensor("input_hint_128:0", shape=(?, 128, 128, 3), dtype=float32)
                 Tensor("predPaintTensorFlow/resize_images/ResizeNearestNeighbor:0", shape=(?, 512, 512, 3), dtype=float32)
 
-            Generator:
+            Generator_Draft:
                 Tensor("input_line_512:0", shape=(?, 512, 512, 1), dtype=float32)
                 Tensor("input_hint_512:0", shape=(?, 512, 512, 3), dtype=float32)
                 Tensor("PaintTensorFlow/output_1:0", shape=(?, 512, 512, 3), dtype=uint8)
         '''
 
-        pre_generator = Generator(resize=True, name="predPaintsTensorFlow")
+        pre_generator = Generator_Draft(resize=True)
         line = keras.Input(shape=(128, 128, 1), dtype=tf.float32, name="input_line_128")
         hint = keras.Input(shape=(128, 128, 3), dtype=tf.float32, name="input_hint_128")
         outputs = pre_generator(line, hint, False)
         self.pred_model = keras.Model(inputs=[line, hint], outputs=outputs)
 
-        generator = Generator(name="PaintsTensorFlow", convertUint8=True)
+        generator = Generator(convertUint8=True)
         line = keras.Input(shape=(512, 512, 1), dtype=tf.float32, name="input_line_512")
+        draft = keras.Input(shape=(512, 512, 3), dtype=tf.float32, name="input_draft_512")
         hint = keras.Input(shape=(512, 512, 3), dtype=tf.float32, name="input_hint_512")
-        outputs = generator(line, hint, False)
-        self.model = keras.Model(inputs=[line, hint], outputs=outputs)
+        outputs = generator(line, draft, hint, False)
+        self.model = keras.Model(inputs=[line, draft, hint], outputs=outputs)
 
         self.sess.run(tf.global_variables_initializer())
 
@@ -80,16 +82,20 @@ class PaintsTensorFlowModul:
         l_128 = np.expand_dims(l_128, 2)
         l_512 = np.expand_dims(l_512, 2)
 
+        hint_512 = cv2.resize(hint, dsize=(512, 512), interpolation=cv2.INTER_AREA)
         hint = cv2.resize(hint, dsize=size, interpolation=cv2.INTER_AREA)
         l_128 = self._img_preprocessing(l_128)
         l_512 = self._img_preprocessing(l_512)
         hint = self._img_preprocessing(hint)
+        hint_512 = self._img_preprocessing(hint_512)
 
         hint[hint == 1.0] = 2.0
-        hint = self.pred_model.predict([l_128, hint])
+        hint_512[hint_512 == 1.0] = 2.0
+
+        draft = self.pred_model.predict([l_128, hint])
 
         # pred 512 pix
-        img = self.model.predict([l_512, hint])
+        img = self.model.predict([l_512, draft, hint_512])
         img = img[0]
         if w > h:
             rate = w / h

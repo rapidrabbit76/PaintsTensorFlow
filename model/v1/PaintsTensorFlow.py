@@ -1,40 +1,41 @@
-from model.SubNet import *
 from tensorflow import keras
+import tensorflow as tf
+from model.v1.SubNet import GenConv2dBlock, GenUpConv2dBlock, DiscConv2dBlock
 import hyperparameter as hp
 
 
 class Generator(keras.Model):
     def __init__(self, resize=None, name=None, convertUint8=None):
         super(Generator, self).__init__(name=name)
-        self.e0 = genConv2dLayer(hp.gf_dim / 2, 3, 1, name="E0")  # 64
-        self.e1 = genConv2dLayer(hp.gf_dim * 1, 4, 2, name="E1")
-        self.e2 = genConv2dLayer(hp.gf_dim * 1, 3, 1, name="E2")
-        self.e3 = genConv2dLayer(hp.gf_dim * 2, 4, 2, name="E3")
-        self.e4 = genConv2dLayer(hp.gf_dim * 2, 3, 1, name="E4")
-        self.e5 = genConv2dLayer(hp.gf_dim * 4, 4, 2, name="E5")
-        self.e6 = genConv2dLayer(hp.gf_dim * 4, 3, 1, name="E6")
-        self.e7 = genConv2dLayer(hp.gf_dim * 8, 4, 2, name="E7")
-        self.e8 = genConv2dLayer(hp.gf_dim * 8, 3, 1, name="E8")
+        self.e0 = GenConv2dBlock(hp.gf_dim / 2, 3, 1, name="E0")  # 64
+        self.e1 = GenConv2dBlock(hp.gf_dim * 1, 4, 2, name="E1")
+        self.e2 = GenConv2dBlock(hp.gf_dim * 1, 3, 1, name="E2")
+        self.e3 = GenConv2dBlock(hp.gf_dim * 2, 4, 2, name="E3")
+        self.e4 = GenConv2dBlock(hp.gf_dim * 2, 3, 1, name="E4")
+        self.e5 = GenConv2dBlock(hp.gf_dim * 4, 4, 2, name="E5")
+        self.e6 = GenConv2dBlock(hp.gf_dim * 4, 3, 1, name="E6")
+        self.e7 = GenConv2dBlock(hp.gf_dim * 8, 4, 2, name="E7")
+        self.e8 = GenConv2dBlock(hp.gf_dim * 8, 3, 1, name="E8")
 
-        self.d8 = genDeConv2dLayer(hp.gf_dim * 8, 4, 2, name="D8")
-        self.d7 = genConv2dLayer(hp.gf_dim * 4, 3, 1, name="D7")
-        self.d6 = genDeConv2dLayer(hp.gf_dim * 4, 4, 2, name="D6")
-        self.d5 = genConv2dLayer(hp.gf_dim * 2, 3, 1, name="D5")
-        self.d4 = genDeConv2dLayer(hp.gf_dim * 2, 4, 2, name="D4")
-        self.d3 = genConv2dLayer(hp.gf_dim * 1, 3, 1, name="D3")
-        self.d2 = genDeConv2dLayer(hp.gf_dim * 1, 4, 2, name="D2")
-        self.d1 = genConv2dLayer(hp.gf_dim / 2, 3, 1, name="D1")
-
+        self.d8 = GenUpConv2dBlock(hp.gf_dim * 8, 4, 2, name="D8")
+        self.d7 = GenConv2dBlock(hp.gf_dim * 4, 3, 1, name="D7")
+        self.d6 = GenUpConv2dBlock(hp.gf_dim * 4, 4, 2, name="D6")
+        self.d5 = GenConv2dBlock(hp.gf_dim * 2, 3, 1, name="D5")
+        self.d4 = GenUpConv2dBlock(hp.gf_dim * 2, 4, 2, name="D4")
+        self.d3 = GenConv2dBlock(hp.gf_dim * 1, 3, 1, name="D3")
+        self.d2 = GenUpConv2dBlock(hp.gf_dim * 1, 4, 2, name="D2")
+        self.d1 = GenConv2dBlock(hp.gf_dim / 2, 3, 1, name="D1")
+        self.concat = keras.layers.Concatenate(axis=-1)
         self.last = keras.layers.Conv2D(3, kernel_size=3, strides=1, padding="SAME",
-                                        use_bias=True, name="output", activation=tf.nn.tanh,
+                                        use_bias=False, name="output", activation=tf.nn.tanh,
                                         kernel_initializer=tf.random_normal_initializer(0., 0.02))
         self.resize = resize
         self.convertUint8 = convertUint8
 
     # enable if use Eager Mode
     # @tf.contrib.eager.defun
-    def call(self, line, hint, training):
-        inputs = tf.concat([line, hint], -1)
+    def call(self, line, draft, hint, training):
+        inputs = tf.concat([line, draft, hint], -1)
         E0 = self.e0(inputs, training=training)
         E1 = self.e1(E0, training=training)
         E2 = self.e2(E1, training=training)
@@ -54,7 +55,8 @@ class Generator(keras.Model):
         D3 = self.d3(D4, training=training)
         D2 = self.d2(E2, D3, training=training)
         D1 = self.d1(D2, training=training)
-        tensor = tf.concat([E0, D1], -1)
+
+        tensor = self.concat([E0, D1])
         last = self.last(tensor)
 
         if self.resize is not None:
@@ -71,13 +73,13 @@ class Discriminator(keras.Model):
     def __init__(self):
         super(Discriminator, self).__init__()
 
-        self.h0 = DiscConv2d(hp.df_dim / 2, 4, 2)
-        self.h1 = DiscConv2d(hp.df_dim / 2, 3, 1)
-        self.h2 = DiscConv2d(hp.df_dim * 1, 4, 2)
-        self.h3 = DiscConv2d(hp.df_dim * 1, 3, 1)
-        self.h4 = DiscConv2d(hp.df_dim * 2, 4, 2)
-        self.h5 = DiscConv2d(hp.df_dim * 2, 3, 1)
-        self.h6 = DiscConv2d(hp.df_dim * 4, 4, 2)
+        self.h0 = DiscConv2dBlock(hp.df_dim / 2, 4, 2)
+        self.h1 = DiscConv2dBlock(hp.df_dim / 2, 3, 1)
+        self.h2 = DiscConv2dBlock(hp.df_dim * 1, 4, 2)
+        self.h3 = DiscConv2dBlock(hp.df_dim * 1, 3, 1)
+        self.h4 = DiscConv2dBlock(hp.df_dim * 2, 4, 2)
+        self.h5 = DiscConv2dBlock(hp.df_dim * 2, 3, 1)
+        self.h6 = DiscConv2dBlock(hp.df_dim * 4, 4, 2)
         self.pad = keras.layers.ZeroPadding2D()
         self.last = keras.layers.Conv2D(1, 4, 1, kernel_initializer=tf.random_normal_initializer(0., 0.02))
 

@@ -6,7 +6,7 @@ tf.enable_eager_execution(config=config)
 
 import numpy as np
 import cv2
-from dataset.Datasets import Datasets, Datasets_512
+from dataset.Datasets import Datasets_512
 from model.PaintsTensorFlow import *
 
 

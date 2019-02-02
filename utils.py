@@ -43,3 +43,10 @@ def mkdir(path):
         os.mkdir(path)
     except FileExistsError:
         pass
+
+
+def initdir(model_name):
+    base = os.path.join("./ckpt", model_name)
+    mkdir(base)
+    mkdir(os.path.join(base, "board"))
+    mkdir(os.path.join(base, "image"))
