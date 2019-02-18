@@ -75,10 +75,6 @@ class Datasets:
 
         line = tf.read_file(linePath)
         line = tf.image.decode_jpeg(line, channels=1)
-        line_shape = line.shape
-
-        line = tf.py_func(self.__line_threshold, [line], tf.uint8)
-        line.set_shape(line_shape)
 
         image = tf.image.resize_images(image, (128, 128), method=3)
         line = tf.image.resize_images(line, (128, 128), method=3)

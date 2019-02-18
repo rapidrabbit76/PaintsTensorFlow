@@ -9,16 +9,18 @@ import tensorlayer as tl
 import numpy as np
 from tqdm import tqdm
 from dataset.Datasets import Datasets_512
-from model.v1_1_0_b.PaintsTensorFlow import Generator_Draft
-from model.v1.PaintsTensorFlow import Generator
+from model.PaintsTensorFlow import Generator
 import utils
 import hyperparameter as hp
 
+# edit by your path
+__SAVED_MODEL_PATH__ = "./saved_model/PaintsTensorFlowDraftModel"
+
 
 class PaintsTensorFlowTrain:
-    def __init__(self, modelName="PaintsTensorFlow"):
+    def __init__(self, model_name="PaintsTensorFlow"):
         self.data_sets = Datasets_512(batch_size=hp.batch_size)
-        self.model_name = "{}_resize:{}".format(modelName, 512)
+        self.model_name = "{}".format(model_name)
         utils.initdir(self.model_name)
 
         self.global_steps = tf.train.get_or_create_global_step()
@@ -26,8 +28,8 @@ class PaintsTensorFlowTrain:
         self.ckpt_path = "./ckpt/{}/".format(self.model_name) + "ckpt_E:{}"
         self.ckpt_prefix = os.path.join(self.ckpt_path, "model_GS:{}")
 
-        self.generator_128 = Generator_Draft(resize=True)
-        self.generator_512 = Generator(convertUint8=True)
+        self.generator_128 = tf.contrib.saved_model.load_keras_model(__SAVED_MODEL_PATH__)
+        self.generator_512 = Generator(res_net_block=False)
         self.optimizer = tf.train.AdamOptimizer(learning_rate=hp.lr, beta1=0.5, beta2=0.9)
 
         self.log_writer = tf.contrib.summary.create_file_writer("./ckpt/{}/board/log".format(self.model_name))
@@ -36,13 +38,6 @@ class PaintsTensorFlowTrain:
                                                optimizer=self.optimizer,
                                                globalSteps=self.global_steps,
                                                epochs=self.epochs)
-        self.__load_weights()
-
-    def __load_weights(self):
-        zero_1 = np.zeros(shape=[1, 128, 128, 1], dtype=np.float32)
-        zero_2 = np.zeros(shape=[1, 128, 128, 3], dtype=np.float32)
-        self.generator_128(zero_1, zero_2, False)
-        self.generator_128.load_weights("./ckpt/PaintsTensorFlowDraftModel_resize:128/generator_128.h5")
 
     def __loging(self, name, scalar):
         with tf.contrib.summary.always_record_summaries():
@@ -52,9 +47,9 @@ class PaintsTensorFlowTrain:
         loss = tf.reduce_mean(tf.abs(target - output))
         return loss
 
-    def __pred_image(self, model, image, line, hint, pred, epoch=None):
+    def __pred_image(self, model, image, line, hint, draft, epoch=None):
         gs = self.global_steps.numpy()
-        predImage = model(line, pred, hint, training=False)
+        predImage = model.predict([line, draft])
         file_name = "./ckpt/{}/image/{}.jpg".format(self.model_name, gs)
 
         if epoch is not None:
@@ -68,9 +63,15 @@ class PaintsTensorFlowTrain:
         hint[hint > 1] = 1
 
         lineImage = np.concatenate([line, line, line], -1)
-        save_img = np.concatenate([lineImage, hint, pred, predImage, image], 1)
+        save_img = np.concatenate([lineImage, hint, draft, predImage, image], 1)
         save_img = utils.convert2uint8(save_img)
         tl.visualize.save_images(save_img, [1, save_img.shape[0]], file_name)
+
+    def __draft_image(self, line_128, hint_128):
+        draft = self.generator_128.predict([line_128, hint_128])
+        draft = tf.image.resize_images(draft, size=(512, 512),
+                                       method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+        return draft
 
     def training(self, loadEpochs=0):
         train_sets, test_sets = self.data_sets.buildDataSets()
@@ -86,10 +87,10 @@ class PaintsTensorFlowTrain:
             print("GS: ", self.global_steps.numpy())
 
             for line_128, hint_128, image, line, hint in tqdm(train_sets, total=hp.batch_steps):
-                draft = self.generator_128(line_128, hint_128, training=False)
+                draft = self.__draft_image(line_128, hint_128)
 
                 with tf.GradientTape() as tape:
-                    genOut = self.generator_512(line, draft, hint, training=True)
+                    genOut = self.generator_512(inputs=[line, draft], training=True)
                     loss = self.__loss(genOut, image)
 
                 # Training
@@ -103,8 +104,8 @@ class PaintsTensorFlowTrain:
                     if gs % hp.sampling_interval == 0:
                         # test image Save
                         for line_128, hint_128, image, line, hint in test_sets.take(1):
-                            pred = self.generator_128(line_128, hint_128, training=False)
-                            self.__pred_image(self.generator_512, image, line, hint, pred, self.epochs.numpy())
+                            draft = self.__draft_image(line_128, hint_128)
+                            self.__pred_image(self.generator_512, image, line, hint, draft, self.epochs.numpy())
 
                     if gs % hp.save_interval == 0:
                         self.check_point.save(file_prefix=self.ckpt_prefix.format(self.epochs.numpy(), gs))
@@ -116,15 +117,14 @@ class PaintsTensorFlowTrain:
 
         for line_128, hint_128, image, line, hint in test_sets.take(1):
             hint = hint.numpy()
-            pred = self.generator_128(line_128, hint_128, training=False)
-            self.__pred_image(self.generator_512, image, line, hint, pred, self.epochs.numpy())
+            draft = self.__draft_image(line_128, hint_128)
+            self.__pred_image(self.generator_512, image, line, hint, draft, self.epochs.numpy())
 
-        ckpt = tf.train.Checkpoint(generator_128=self.generator_128,
-                                   generator_512=self.generator_512)
-        ckpt.save(file_prefix="./ckpt/" + self.model_name + "/generator")
-        self.check_point.save(file_prefix=self.ckpt_prefix.format("Done", self.global_steps.numpy()))
+        self.generator_512.summary()
+        print(self.global_steps)
 
-        self.generator_128.save_weights("./ckpt/" + self.model_name + "/PredPaintsTensorFlow.h5")
-        self.generator_512.save_weights("./ckpt/" + self.model_name + "/PaintsTensorFlow.h5")
-
+        save_path = "./ckpt/" + self.model_name + "/{}.h5".format(self.generator_512.name)
+        self.generator_512.save(save_path, include_optimizer=False)  # for keras Model
+        save_path = tf.contrib.saved_model.save_keras_model(self.generator_512, "./saved_model")  # saved_model
+        print("saved_model path = {}".format(save_path))
         print("------------------------------Training Done-------------------------------------")

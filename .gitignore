@@ -2,6 +2,7 @@
 ckpt/
 log/
 
+
 ## model
 *.h5
 *.data-*

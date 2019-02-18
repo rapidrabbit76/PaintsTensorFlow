@@ -6,7 +6,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QMainWindow, QColorDialog, QFileDialog
 
 from GUI.Painter import Painter, convertQImageToMat, Img, ImageQt
-from GUI.PaintsTensorFlowModul import PaintsTensorFlowModul
+from GUI.tensorModul.PaintsTensorFlowModul import PaintsTensorFlowModul
 
 
 class Window(QMainWindow):

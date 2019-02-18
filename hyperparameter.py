@@ -16,15 +16,15 @@ l1_scaling = 100
 l2_scaling = 10
 
 # for Train
-epoch = 0
-batch_size = 3
+epoch = 2
+batch_size = 4
 
 log_interval = 10
 sampling_interval = 200
 save_interval = 4000
 
 # data & save Path
-train_image_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/train/image/*.*"
-train_line_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/train/line/*.*"
-test_image_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/test/image/*.*"
-test_line_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/test/line/*.*"
+train_image_datasets_path = ""
+train_line_datasets_path = ""
+test_image_datasets_path = ""
+test_line_datasets_path = ""

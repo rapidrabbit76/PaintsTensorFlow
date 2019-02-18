@@ -1,12 +1,6 @@
-import tensorflow as tf
 import numpy as np
-import copy
-
 import cv2
 import os
-from glob import glob
-from random import randint
-import hyperparameter as hp
 
 
 def get_line(imgs):
