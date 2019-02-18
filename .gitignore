@@ -2,17 +2,17 @@
 ckpt/
 log/
 testImages/
-saved_model/PaintsTensorFlowDraftModel/
-saved_model/PaintsTensorFlowModel/
+
 
 
 
 ## model
 *.h5
 *.data-*
-/assets
-/variables
-*.pb
+saved_model/PaintsTensorFlowDraftModel/
+saved_model/PaintsTensorFlowModel/
+GUI/model/PaintsTensorFlow/PaintsTensorFlowDraftModel/
+GUI/model/PaintsTensorFlow/PaintsTensorFlowModel/
 
 chekpoint
 *.meta
