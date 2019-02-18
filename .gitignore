@@ -2,6 +2,8 @@
 ckpt/
 log/
 testImages/
+saved_model/PaintsTensorFlowDraftModel/
+saved_model/PaintsTensorFlowModel/
 
 ## model
 *.h5
