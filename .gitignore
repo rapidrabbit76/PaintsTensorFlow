@@ -1,7 +1,7 @@
 ## Training dir
 ckpt/
 log/
-
+testImages/
 
 ## model
 *.h5
