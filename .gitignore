@@ -5,11 +5,18 @@ testImages/
 saved_model/PaintsTensorFlowDraftModel/
 saved_model/PaintsTensorFlowModel/
 
+
+
 ## model
 *.h5
 *.data-*
+/assets
+/variables
+*.pb
+
 chekpoint
 *.meta
+
 
 ## etc
 /__pycache__
