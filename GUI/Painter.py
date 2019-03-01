@@ -26,6 +26,11 @@ class Painter(QWidget):
         self.canvas = QLabel()
         self.canvas.setMouseTracking(True)
 
+    def set_image(self,img):
+        self.line = img.copy()
+        img = Img.fromarray(img)
+        return self.painter_init(ImageQt(img))
+
     def mousePressEvent(self, e):
         if e.button() == Qt.LeftButton:
             self.drawing = True

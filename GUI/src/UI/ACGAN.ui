@@ -70,6 +70,22 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="lineBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Liner</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="colorBtn">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -315,19 +331,7 @@
     <addaction name="fileOpen"/>
     <addaction name="fileSave"/>
    </widget>
-   <widget class="QMenu" name="menupenSize">
-    <property name="title">
-     <string>pe&amp;nSize</string>
-    </property>
-    <addaction name="penSize2"/>
-    <addaction name="penSize3"/>
-    <addaction name="penSize4"/>
-    <addaction name="penSize5"/>
-    <addaction name="penSize6"/>
-    <addaction name="penSize7"/>
-   </widget>
    <addaction name="fileMenu"/>
-   <addaction name="menupenSize"/>
   </widget>
   <action name="fileOpenBtn">
    <property name="text">

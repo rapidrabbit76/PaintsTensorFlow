@@ -49,33 +49,26 @@ def active_img(img):
 
 
 class SketchKeras():
-    CKPT = "./GUI/model/Liner"
-    MODEL_PATH = "./GUI/model/Liner/Liner.meta"
+    __CKPT = "./GUI/src/saved_model/Liner"
+    __MODEL_PATH = "./GUI/src/saved_model/Liner/Liner.meta"
 
     def __init__(self, sess):
         self.sess = sess
         self.__build_model()
 
     def __build_model(self):
-        ''' Load & build tensorflow graph
-               tensors Name:
-                   [<tf.Tensor 'input_1:0' shape=(?, 512, 512, 1) dtype=float32>]
-                   [<tf.Tensor 'conv2d_18/BiasAdd:0' shape=(?, 512, 512, 1) dtype=float32>]
-        '''
-
-        saver = tf.train.import_meta_graph(self.MODEL_PATH, clear_devices=True)
-        saver.restore(sess=self.sess, save_path=tf.train.latest_checkpoint(self.CKPT))
+        saver = tf.train.import_meta_graph(self.__MODEL_PATH, clear_devices=True)
+        saver.restore(sess=self.sess, save_path=tf.train.latest_checkpoint(self.__CKPT))
 
         graph = tf.get_default_graph()
         self.ph_input = graph.get_tensor_by_name("input_1:0")
         self.model = graph.get_tensor_by_name("conv2d_18/BiasAdd:0")
 
-    def get_line(self, path):
-        from_mat = cv2.imread(path)
-        width = float(from_mat.shape[1])
-        height = float(from_mat.shape[0])
+    def get_line(self,image):
+        width = float(image.shape[1])
+        height = float(image.shape[0])
 
-        from_mat = cv2.resize(from_mat, (512, 512), interpolation=cv2.INTER_AREA)
+        from_mat = cv2.resize(image, (512, 512), interpolation=cv2.INTER_AREA)
         from_mat = from_mat.transpose((2, 0, 1))
         light_map = np.zeros(from_mat.shape, dtype=np.float)
 
@@ -109,4 +102,10 @@ class SketchKeras():
         img = cv2.resize(img, (new_width, new_height), cv2.INTER_LINEAR_EXACT)
         img = np.expand_dims(img, 3)
         line = np.concatenate([img, img, img], axis=2)
+        return line
+
+
+    def get_line_from_file(self, path):
+        from_mat = cv2.imread(path)
+        line = self.get_line(from_mat)
         return line

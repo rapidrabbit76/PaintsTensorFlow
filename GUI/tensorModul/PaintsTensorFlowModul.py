@@ -4,8 +4,8 @@ from GUI.tensorModul.SketchKeras import SketchKeras
 
 
 class PaintsTensorFlowModul:
-    __DRAFT_MODEL_PATH__ = "./GUI/model/PaintsTensorFlow/PaintsTensorFlowDraftModel"
-    __MODEL_PATH__ = "./GUI/model/PaintsTensorFlow/PaintsTensorFlowModel"
+    __DRAFT_MODEL_PATH__ = "./GUI/src/saved_model/PaintsTensorFlowDraftModel"
+    __MODEL_PATH__ = "./GUI//src/saved_model/PaintsTensorFlowModel"
 
     def __init__(self, sess=None):
         if sess is None:

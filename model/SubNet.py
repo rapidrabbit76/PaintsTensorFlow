@@ -78,8 +78,9 @@ def tf_int_round(num):
 
 
 class resize_layer(tf.keras.layers.Layer):
-    def __init__(self, **kwargs):
+    def __init__(self, size=(512, 512), **kwargs, ):
         super(resize_layer, self).__init__(**kwargs)
+        (self.height, self.width) = size
 
     def build(self, input_shape):
         super(resize_layer, self).build(input_shape)

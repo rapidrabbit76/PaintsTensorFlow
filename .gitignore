@@ -2,9 +2,7 @@
 ckpt/
 log/
 testImages/
-
-
-
+GUI/model/
 
 ## model
 *.h5
@@ -16,7 +14,6 @@ GUI/model/PaintsTensorFlow/PaintsTensorFlowModel/
 
 chekpoint
 *.meta
-
 
 ## etc
 /__pycache__
