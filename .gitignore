@@ -8,6 +8,7 @@ testImages/
 *.data-*
 saved_model/PaintsTensorFlowDraftModel/
 saved_model/PaintsTensorFlowModel/
+GUI/src/saved_model/
 GUI/src/saved_model/PaintsTensorFlowDraftModel/
 GUI/src/saved_model/PaintsTensorFlowModel/
 GUI/src/saved_model/Liner/
