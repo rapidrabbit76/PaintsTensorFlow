@@ -2,15 +2,16 @@
 ckpt/
 log/
 testImages/
-GUI/model/
 
 ## model
 *.h5
 *.data-*
 saved_model/PaintsTensorFlowDraftModel/
 saved_model/PaintsTensorFlowModel/
-GUI/model/PaintsTensorFlow/PaintsTensorFlowDraftModel/
-GUI/model/PaintsTensorFlow/PaintsTensorFlowModel/
+GUI/src/saved_model/PaintsTensorFlowDraftModel/
+GUI/src/saved_model/PaintsTensorFlowModel/
+GUI/src/saved_model/Liner/
+
 
 chekpoint
 *.meta
@@ -19,3 +20,4 @@ chekpoint
 /__pycache__
 /venv*
 /.idea
+/GUI/model/
