@@ -24,7 +24,7 @@ sampling_interval = 200
 save_interval = 4000
 
 # data & save Path
-train_image_datasets_path = ""
-train_line_datasets_path = ""
-test_image_datasets_path = ""
-test_line_datasets_path = ""
+train_image_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/train/image/*.*"
+train_line_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/train/line/*.*"
+test_image_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/test/image/*.*"
+test_line_datasets_path = "/home/yslee/datasets/PaintsTensorflow/512px/test/line/*.*"

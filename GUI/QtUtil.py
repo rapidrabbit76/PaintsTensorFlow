@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from PyQt5.QtWidgets import QMessageBox
 
 
 def convertQImageToMat(incomingImage):
@@ -18,3 +19,7 @@ def convertQImageToMat(incomingImage):
 
     except AttributeError:
         pass
+
+
+def err_message(parent, message):
+    QMessageBox.question(parent, "Err", message, QMessageBox.Ok, QMessageBox.Ok)

@@ -175,9 +175,10 @@ class Datasets_512(Datasets):
         image_128 = self.convert2float(image_128)
         line_128 = self.convert2float(line_128)
 
-        hint_128 = tf.py_func(self._buildHint,
-                              [image_128],
-                              tf.float32)
+        hint_128 = tf.py_function(self._buildHint,
+                                  [image_128],
+                                  tf.float32)
+
         hint_128.set_shape(shape=image_128.shape)
         hint = tf.image.resize_images(hint_128, (512, 512), method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
 

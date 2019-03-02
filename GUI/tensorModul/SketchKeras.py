@@ -53,8 +53,16 @@ class SketchKeras():
     __MODEL_PATH = "./GUI/src/saved_model/Liner/Liner.meta"
 
     def __init__(self, sess):
-        self.sess = sess
+
+        if sess is None:
+            config = tf.ConfigProto()
+            config.gpu_options.per_process_gpu_memory_fraction = 0.2
+            self.sess = tf.Session(config=config)
+        else:
+            self.sess = sess
+
         self.__build_model()
+        self.__zero_init()
 
     def __build_model(self):
         saver = tf.train.import_meta_graph(self.__MODEL_PATH, clear_devices=True)
@@ -64,7 +72,11 @@ class SketchKeras():
         self.ph_input = graph.get_tensor_by_name("input_1:0")
         self.model = graph.get_tensor_by_name("conv2d_18/BiasAdd:0")
 
-    def get_line(self,image):
+    def __zero_init(self):
+        feed = np.zeros(shape=(1, 512, 512, 1))
+        self.sess.run(self.model, feed_dict={self.ph_input: feed})
+
+    def get_line(self, image):
         width = float(image.shape[1])
         height = float(image.shape[0])
 
@@ -103,7 +115,6 @@ class SketchKeras():
         img = np.expand_dims(img, 3)
         line = np.concatenate([img, img, img], axis=2)
         return line
-
 
     def get_line_from_file(self, path):
         from_mat = cv2.imread(path)

@@ -1,13 +1,13 @@
 import tensorflow as tf
 from GUI.QtUtil import *
-from GUI.tensorModul.SketchKeras import SketchKeras
 
 
-class PaintsTensorFlowModul:
+class PaintsTensorFlow:
     __DRAFT_MODEL_PATH__ = "./GUI/src/saved_model/PaintsTensorFlowDraftModel"
     __MODEL_PATH__ = "./GUI//src/saved_model/PaintsTensorFlowModel"
 
-    def __init__(self, sess=None):
+    def __init__(self, sess):
+
         if sess is None:
             config = tf.ConfigProto()
             config.gpu_options.per_process_gpu_memory_fraction = 0.2
@@ -16,11 +16,20 @@ class PaintsTensorFlowModul:
             self.sess = sess
 
         self.__build_model()
+        self.__zero_init()
 
     def __build_model(self):
         self.__draft_model = tf.contrib.saved_model.load_keras_model(self.__DRAFT_MODEL_PATH__)
         self.__model = tf.contrib.saved_model.load_keras_model(self.__MODEL_PATH__)
-        self.sketch_keras = SketchKeras(self.sess)
+
+    def __zero_init(self):
+        feed_a = np.zeros(shape=(1, 128, 128, 1))
+        feed_b = np.zeros(shape=(1, 128, 128, 3))
+        self.__draft_model.predict([feed_a, feed_b])
+
+        feed_a = np.zeros(shape=(1, 512, 512, 1))
+        feed_b = np.zeros(shape=(1, 512, 512, 3))
+        self.__model.predict([feed_a, feed_b])
 
     def __convert2f32(self, img):
         img = img.astype(np.float32)
@@ -30,7 +39,7 @@ class PaintsTensorFlowModul:
         img = (img + 1) * 127.5
         return img.astype(np.uint8)
 
-    def __img_preprocessing(self, img):
+    def __image_preprocessing(self, img):
         img = np.expand_dims(img, 0)
         img = self.__convert2f32(img)
         return img
@@ -45,9 +54,9 @@ class PaintsTensorFlowModul:
         l_512 = np.expand_dims(l_512, 2)
 
         hint = cv2.resize(hint, dsize=size, interpolation=cv2.INTER_AREA)
-        l_128 = self.__img_preprocessing(l_128)
-        l_512 = self.__img_preprocessing(l_512)
-        hint = self.__img_preprocessing(hint)
+        l_128 = self.__image_preprocessing(l_128)
+        l_512 = self.__image_preprocessing(l_512)
+        hint = self.__image_preprocessing(hint)
         hint[hint == 1.0] = 2.0
 
         draft = self.__draft_model.predict([l_128, hint])
@@ -66,5 +75,4 @@ class PaintsTensorFlowModul:
             w = outputs_size
             h = int(rate * outputs_size)
         img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
-
         return img
