@@ -127,7 +127,6 @@ class Window(QMainWindow):
         w, h = self.painter.set_image(img)
         self.setFixedWidth(w + 20)
         self.setFixedHeight(h + 200)
-
         self.update()
         self.__liner_flag = False
 
