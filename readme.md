@@ -3,8 +3,10 @@
 <img src="./src/GUI/0.jpeg" width="800">
 
 # Model Structure
-<img src="./src/model structure/Model 01.jpeg" width="800">
-<img src="./src/model structure/Model 02.jpeg" width="800">
+<img src="./src/model structure/Model 01.jpg" width="400">
+<img src="./src/model structure/Model 02.jpg" width="400">
+<img src="./src/model structure/Model 03.jpg" width="400">
+<img src="./src/model structure/Model 04.jpg" width="800">
 
 # Results
 ### input(line) - input(hint) - draft - output - ground truth
@@ -16,15 +18,47 @@ Gray background in hint for visualization.
 <img src="./src/sample/4.jpg" width="800">  
 <img src="./src/sample/5.jpg" width="800">  
 <img src="./src/sample/6.jpg" width="800">  
+<img src="./src/sample/7.jpg" width="800">  
+<img src="./src/sample/8.jpg" width="800">  
+<img src="./src/sample/9.jpg" width="800">  
+<img src="./src/sample/10.jpg" width="800">  
+
+
 
 # GUI
-<img src="./src/GUI/1.jpeg" width="800">
-<img src="./src/GUI/2.jpeg" width="800">
-<img src="./src/GUI/3.jpeg" width="800">  
+<img src="./src/GUI/1.png" height="400">
+
+File - open( select Image )
+
+
+<img src="./src/GUI/2.png" width="400">
+
+
+Click "Liner" to create line art
+
+<img src="./src/GUI/3.png" width="400">
+
+
+<img src="./src/GUI/4.png" width="400">  
+
+
+Click "RUN" to automatically color
+
+<img src="./src/GUI/5.png" width="400">  
+
+
+Click "Color" to select a color and then draw a color hint
+
+<img src="./src/GUI/6.png" width="400">  
+
+
+Click "RUN" to automatically color
+
+
 
 
 # Requirements  
-* tensorflow_gpu==1.12.0 or tensorflow==1.12.0
+* tensorflow_gpu==1.12. or tensorflow==1.12.0 # "1.13.1" is ok!
 * numpy==1.15.4
 * tensorlayer==1.11.1
 * tqdm==4.28.1
@@ -35,12 +69,11 @@ Gray background in hint for visualization.
 
 # Install  
 1. pip install -r requirements.txt
-2. Download pretrained models [PaintsTensorFlow](https://drive.google.com/file/d/1POMHzS1Itz39dpYzcWrvAVjw4pb5knCv/view?usp=sharing)
-and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/view?usp=sharing)
+2. Download saved_models [PaintsTensorFlowDraftModel](https://drive.google.com/file/d/1d6KMYplB2SPh6teDr22TKqc9Cnp0Isi2/view?usp=sharing), [PaintsTensorFlowModel](https://drive.google.com/file/d/1MyUz_jI8Su95KPxcn2s42NMEJSYTlKEu/view?usp=sharing), [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/view?usp=sharing) and [Waifu2x](https://drive.google.com/file/d/1n8t-okJ4Rm1s7xLHL23i5f0Yywerel7s/view?usp=sharing)
     - **Liner** is **SketchKeras** model
-3. Copy the files in **PaintsTensorFlow** into **"./GUI/model/PaintsTensorFlow/"**, and
- the files in **Liner** into **"./GUI/model/Liner"**
-3. python3 runGUI.py
+3. Copy the files(**PaintsTensorFlowDraftModel, PaintsTensorFlowModel, Liner, Waifu2x**) into **"./GUI/src/saved_model/"**
+
+4. python3 runGUI.py
 
 
 # Training
@@ -66,13 +99,13 @@ and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/vi
 
         1.1. python3 training.py -loadEpochs 0 -mode draft
 
-    hyperparameter.py : lr =  1e-4 , epoch = 5 , batch_size = in my case 16 recommendation is 4  
+    hyperparameter.py : lr =  1e-4 , epoch = 10 , batch_size = in my case 8 recommendation is 4  
 
 
-        1.2. python3 training.py -loadEpochs 4 -mode draft
+        1.2. python3 training.py -loadEpochs 9 -mode draft
 
 
-    hyperparameter.py : lr =  1e-5 , epoch = 5 , batch_size = same as step 1.1
+    hyperparameter.py : lr =  1e-5 , epoch = 10 , batch_size = same as step 1.1
     
 - ### step 2: Training model 512x512 size **Total 2 epoch**
 
@@ -90,10 +123,10 @@ and [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/vi
 
 # Loss
 ### Draft model Generator Loss
-<img src="./src/loss/Draft%20model%20Generator%20Loss.png" width="800">
+<img src="./src/loss/Draft%20model%20Generator%20Loss.svg" width="800">
 
 ### 512x512px model Generator Loss
-<img src="./src/loss/512x512px%20model%20Generator%20Loss.png" width="800">
+<img src="./src/loss/512x512px%20model%20Generator%20Loss.svg" width="800">
 
 
 # References
