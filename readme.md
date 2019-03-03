@@ -94,7 +94,7 @@ Click "RUN" to automatically color
         │    │    └─ line  (hyperparameter: test_line_datasets_path, ex: path/*.*)
         │    │         └─ 1.jpg, 2.jpg, 3.jpg
         
-- ### step 1: Training draft model 128X128 size **Total 10 epoch**
+- ### step 1: Training draft model 128X128 size **Total 20 epoch**
 
 
         1.1. python3 training.py -loadEpochs 0 -mode draft
