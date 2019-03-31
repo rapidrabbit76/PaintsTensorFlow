@@ -69,7 +69,7 @@ Click "RUN" to automatically color
 
 # Install  
 1. pip install -r requirements.txt
-2. Download saved_models [PaintsTensorFlowDraftModel](https://drive.google.com/file/d/1d6KMYplB2SPh6teDr22TKqc9Cnp0Isi2/view?usp=sharing), [PaintsTensorFlowModel](https://drive.google.com/file/d/1MyUz_jI8Su95KPxcn2s42NMEJSYTlKEu/view?usp=sharing), [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/view?usp=sharing) and [Waifu2x](https://drive.google.com/file/d/1n8t-okJ4Rm1s7xLHL23i5f0Yywerel7s/view?usp=sharing)
+2. Download saved_models [PaintsTensorFlowDraftModel](https://drive.google.com/file/d/1d6KMYplB2SPh6teDr22TKqc9Cnp0Isi2/view?usp=sharing), [PaintsTensorFlowModel](https://drive.google.com/file/d/1MyUz_jI8Su95KPxcn2s42NMEJSYTlKEu/view?usp=sharing), [Liner](https://drive.google.com/file/d/1h6rKAyWUfYGZd2J_L_nalPPfKbL8Br7Y/view?usp=sharing) and [Waifu2x](https://drive.google.com/open?id=1R86g3_G5INvVV4Vx4xiflezK_U5L5CwD)
     - **Liner** is **SketchKeras** model
 3. Copy the files(**PaintsTensorFlowDraftModel, PaintsTensorFlowModel, Liner, Waifu2x**) into **"./GUI/src/saved_model/"**
 
