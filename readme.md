@@ -1,5 +1,4 @@
 # PaintsTensorFlow 
-### [PaintsChainer](https://github.com/taizan/PaintsChainer/) by Tensorflow
 <img src="./src/GUI/0.jpeg" width="800">
 
 # Model Structure
