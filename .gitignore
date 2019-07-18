@@ -23,3 +23,5 @@ chekpoint
 /venv*
 /.idea
 /GUI/model/
+test.py
+Test/

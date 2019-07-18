@@ -1,11 +1,16 @@
 # PaintsTensorFlow 
 <img src="./src/GUI/0.jpeg" width="800">
+<img src="./src/sample/0.png" width="800">
 
 # Model Structure
-<img src="./src/model structure/Model 01.jpg" width="400">
-<img src="./src/model structure/Model 02.jpg" width="400">
-<img src="./src/model structure/Model 03.jpg" width="400">
-<img src="./src/model structure/Model 04.jpg" width="800">
+## DraftModel
+<img src="./src/model structure/model 01.jpg" width="800">
+
+## 512GeneratorModel
+<img src="./src/model structure/model 02.jpg" width="800">
+<img src="./src/model structure/model 03.jpg" width="800">
+
+
 
 # Results
 ### input(line) - input(hint) - draft - output - ground truth
@@ -25,10 +30,10 @@ Gray background in hint for visualization.
 
 
 # GUI
+
 <img src="./src/GUI/1.png" height="400">
 
 File - open( select Image )
-
 
 <img src="./src/GUI/2.png" width="400">
 
@@ -57,7 +62,7 @@ Click "RUN" to automatically color
 
 
 # Requirements  
-* tensorflow_gpu==1.12. or tensorflow==1.12.0 # "1.13.1" is ok!
+* tensorflow ==1.13.1
 * numpy==1.15.4
 * tensorlayer==1.11.1
 * tqdm==4.28.1
@@ -92,12 +97,12 @@ Click "RUN" to automatically color
         │    │    │    └─ 1.jpg, 2.jpg, 3.jpg
         │    │    └─ line  (hyperparameter: test_line_datasets_path, ex: path/*.*)
         │    │         └─ 1.jpg, 2.jpg, 3.jpg
-        
+    
 - ### step 1: Training draft model 128X128 size **Total 20 epoch**
 
 
         1.1. python3 training.py -loadEpochs 0 -mode draft
-
+    
     hyperparameter.py : lr =  1e-4 , epoch = 10 , batch_size = in my case 8 recommendation is 4  
 
 
@@ -105,7 +110,7 @@ Click "RUN" to automatically color
 
 
     hyperparameter.py : lr =  1e-5 , epoch = 10 , batch_size = same as step 1.1
-    
+
 - ### step 2: Training model 512x512 size **Total 2 epoch**
 
 
@@ -113,7 +118,7 @@ Click "RUN" to automatically color
 
 
     hyperparameter.py : lr =  1e-4 , epoch = 1 , batch_size = in my case 3 recommendation is 4
-
+    
         2.2. python3 training.py -loadEpochs 0 -mode 512
 
 
