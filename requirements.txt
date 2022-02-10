@@ -1,4 +1,4 @@
-tensorflow==1.12.2
+tensorflow==2.5.3
 tensorlayer==1.11.1
 numpy==1.15.4
 tqdm==4.28.1
