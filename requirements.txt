@@ -1,6 +1,6 @@
 tensorflow==1.12.2
 tensorlayer==1.11.1
-numpy==1.15.4
+numpy==1.21.0
 tqdm==4.28.1
 opencv_python==3.4.4.19
 scipy==1.1.0
