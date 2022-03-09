@@ -59,6 +59,7 @@ def draft_train(args, wandb_run):
 
     ######################## training ##########################
     for epoch in range(args.epochs):
+        print(f"Epoch: {epoch} start")
         training_loop(
             train_dataset, test_batch, gen, disc, gen_optim, disc_optim
         )
@@ -73,13 +74,21 @@ def draft_train(args, wandb_run):
 
 def training_loop(train_dataset, test_batch, gen, disc, gen_optim, disc_optim):
     global global_step
-    dataset = tqdm(train_dataset)
-    for batch_idx, batch in enumerate(dataset):
+    pbar = tqdm(train_dataset)
+    for batch_idx, batch in enumerate(pbar):
         global_step += 1
         training_info = training_step(gen, disc, gen_optim, disc_optim, batch)
 
-        if batch_idx % 10 == 0:
-            log_scalers(training_info)
+        if batch_idx % 5 == 0:
+            log_dict = log_scalers(training_info)
+            pbar.set_description_str(
+                (
+                    f"[GS:{global_step} "
+                    f"[rp:{log_dict['real_prob'].numpy().item(): 0.2f}] "
+                    f"[fp:{log_dict['fake_prob'].numpy().item(): 0.2f}] "
+                    f"[l1:{log_dict['l1_loss'].numpy().item(): 0.2f}] "
+                ),
+            )
 
         if batch_idx % 100 == 0:
             images = test_step(test_batch, gen)
