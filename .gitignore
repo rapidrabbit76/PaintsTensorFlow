@@ -1,1 +1,21 @@
+## IDE
+.vscode/
+
+
+## CACHE
+**/__pycache__/**
+
+# LOG
+wandb/
+experiment/
+
+# models
+*.h5
+*.keras
+
+# DATASET
 DATASET
+
+# ETC
+temp.py
+main.sh
