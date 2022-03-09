@@ -44,7 +44,7 @@ def draft_train(args, wandb_run):
     )
     test_batch = next(iter(test_dataset))
     line, hint, color = test_batch
-    mask = opt.mask_gen(list(hint.shape), X)
+    mask = opt.mask_gen(list(hint.shape), X, 0)
     hint = hint * mask
     test_batch = (line, hint, color)
 
@@ -195,7 +195,7 @@ def test_step(
     test_batch: Tuple[Tensor, Tensor, Tensor], gen: Generator
 ) -> List[Tensor]:
     line, hint, color = test_batch
-    zero_hint = tf.zeros_like(hint) - 1
+    zero_hint = tf.zeros_like(hint)
     training = False
 
     _color_w_hint = gen(line, hint, training=training)

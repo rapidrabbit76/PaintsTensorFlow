@@ -25,8 +25,7 @@ def mask_gen(tensor_shape: List[int], X, zero_hint_size: int = None):
         ],
         0,
     )
-
-    mask = np.concatenate([mask1, mask2], 0)
+    mask = np.concatenate([mask1, mask2], 0) if zero_hint_size > 0 else mask1
     return tf.convert_to_tensor(mask, dtype=tf.float32)
 
 
