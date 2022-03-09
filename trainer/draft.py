@@ -229,13 +229,16 @@ def log_scalers(training_info):
     return log_dict
 
 
-def log_images(images: List[Tensor], name: str) -> Tensor:
+def log_images(images: List[Tensor], name: str, max_image_count=8) -> Tensor:
     images = tf.concat(
         [
             (tf.concat([image] * 3, -1) if image.shape[-1] == 1 else image)
             for image in images
         ],
         1,
+    )
+    images = (
+        images if len(images) <= max_image_count else images[:max_image_count]
     )
     image = tf.concat([image for image in images], 1)
     log_image = wandb.Image(image)
