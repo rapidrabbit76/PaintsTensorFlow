@@ -108,60 +108,6 @@ def training_loop(train_dataset, test_batch, gen, disc, gen_optim, disc_optim):
     image_save(test_images)
 
 
-def image_save(image: Union[Tensor, np.ndarray]):
-    path = os.path.join(
-        logger.dir,
-        "image",
-        f"{str(global_step).zfill(8)}.jpg",
-    )
-    tf.keras.utils.save_img(path, image, "channels_last")
-    return 0
-
-
-def log_scalers(training_info):
-    log_dict = {
-        "real_prob": opt.logits_to_prob(training_info["logits"]),
-        "fake_prob": opt.logits_to_prob(training_info["_logits"]),
-        "adv_loss": training_info["adv_loss"],
-        "l1_loss": training_info["l1_loss"],
-        "gen_loss": training_info["gen_loss"],
-        "disc_real_loss": training_info["disc_real_loss"],
-        "disc_fake_loss": training_info["disc_fake_loss"],
-        "disc_loss": training_info["disc_loss"],
-    }
-    logger.log(log_dict)
-    return log_dict
-
-
-def log_images(images: List[Tensor], name: str) -> Tensor:
-    images = tf.concat(
-        [
-            (tf.concat([image] * 3, -1) if image.shape[-1] == 1 else image)
-            for image in images
-        ],
-        1,
-    )
-    image = tf.concat([image for image in images], 1)
-    log_image = wandb.Image(image)
-    logger.log({f"images/{name}": log_image})
-    return image
-
-
-@tf.function
-def test_step(
-    test_batch: Tuple[Tensor, Tensor, Tensor], gen: Generator
-) -> List[Tensor]:
-    line, hint, color = test_batch
-    zero_hint = tf.zeros_like(hint) - 1
-    training = False
-
-    _color_w_hint = gen(line, hint, training=training)
-    _color_wo_hint = gen(line, zero_hint, training=training)
-
-    # plotting
-    return [line, hint, _color_w_hint, _color_wo_hint, color]
-
-
 @tf.function
 def training_step(
     gen: Generator,
@@ -242,3 +188,56 @@ def discriminator_loss(
         )
     )
     return disc_real_loss, disc_fake_loss
+
+
+@tf.function
+def test_step(
+    test_batch: Tuple[Tensor, Tensor, Tensor], gen: Generator
+) -> List[Tensor]:
+    line, hint, color = test_batch
+    zero_hint = tf.zeros_like(hint) - 1
+    training = False
+
+    _color_w_hint = gen(line, hint, training=training)
+    _color_wo_hint = gen(line, zero_hint, training=training)
+
+    return [line, hint, _color_w_hint, _color_wo_hint, color]
+
+
+def image_save(image: Union[Tensor, np.ndarray]):
+    path = os.path.join(
+        logger.dir,
+        "image",
+        f"{str(global_step).zfill(8)}.jpg",
+    )
+    tf.keras.utils.save_img(path, image, "channels_last")
+    return 0
+
+
+def log_scalers(training_info):
+    log_dict = {
+        "real_prob": opt.logits_to_prob(training_info["logits"]),
+        "fake_prob": opt.logits_to_prob(training_info["_logits"]),
+        "adv_loss": training_info["adv_loss"],
+        "l1_loss": training_info["l1_loss"],
+        "gen_loss": training_info["gen_loss"],
+        "disc_real_loss": training_info["disc_real_loss"],
+        "disc_fake_loss": training_info["disc_fake_loss"],
+        "disc_loss": training_info["disc_loss"],
+    }
+    logger.log(log_dict)
+    return log_dict
+
+
+def log_images(images: List[Tensor], name: str) -> Tensor:
+    images = tf.concat(
+        [
+            (tf.concat([image] * 3, -1) if image.shape[-1] == 1 else image)
+            for image in images
+        ],
+        1,
+    )
+    image = tf.concat([image for image in images], 1)
+    log_image = wandb.Image(image)
+    logger.log({f"images/{name}": log_image})
+    return image
