@@ -27,12 +27,6 @@ class DraftDataset:
             ],
             additional_targets={"image0": "image"},
         )
-        self.line_transforms = A.Compose(
-            [
-                A.Normalize(),
-            ]
-        )
-        self.color_transforms = A.Compose([])
 
     @classmethod
     def cast(cls, image: Tensor) -> Tensor:
