@@ -1,18 +1,16 @@
-from typing import List, Tuple, Dict, Union
 import os
+from typing import Dict, List, Tuple, Union
+
 import numpy as np
-
-import tensorflow as tf
-from tensorflow import Tensor
-import tensorflow.keras.optimizers as optimizers
-from tqdm import tqdm
+import opt
 import scipy.stats as stats
+import tensorflow as tf
+import tensorflow.keras.optimizers as optimizers
 import wandb
-
 from dataset import draft_dataset
 from models import Discriminator, Generator
-
-import opt
+from tensorflow import Tensor
+from tqdm import tqdm
 
 global global_step
 global_step = 0
