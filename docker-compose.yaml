@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  paints_tensorflow:
+    build: .
+    user: "${USERID}:${GROUPID}"
+    volumes:
+      - .:/devel
+    command: tail -f /dev/null
