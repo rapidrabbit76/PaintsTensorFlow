@@ -10,9 +10,12 @@ def main():
     parser.add_argument("--project_name", type=str, default="PaintsTensorflow")
     parser.add_argument("--logdir", type=str, default="experiment")
     parser.add_argument("--mode", type=str, choices=["draft", "colorization"])
+    parser.add_argument("--draft_weights_path", type=str, default="")
+
     # data
     parser.add_argument("--root_dir", type=str)
     parser.add_argument("--image_size", type=int, default=512)
+    parser.add_argument("--draft_image_r", type=int, default=4)
     parser.add_argument("--batch_size", type=int, default=1)
 
     # model
@@ -22,7 +25,10 @@ def main():
     # training
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--lr", type=float)
+    parser.add_argument("--decay_steps_rate", type=float, default=0.4)
+    parser.add_argument("--decay_rate", type=float, default=0.1)
     parser.add_argument("--beta_1", type=float, default=0.5)
+    parser.add_argument("--beta_2", type=float, default=0.99)
     parser.add_argument("--mu", type=float, default=1)
     parser.add_argument("--sigma", type=float, default=0.005)
 
