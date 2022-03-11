@@ -55,9 +55,14 @@ class DraftTransforms:
 
     def __call__(
         self, line_path: str, color_path: str
-    ) -> Tuple[Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         line = self.image_load(line_path, 1)
         color = self.image_load(color_path, 3)
+        return self.preprocessing(line, color)
+
+    def preprocessing(
+        self, line: Tensor, color: Tensor
+    ) -> Tuple[Tensor, Tensor]:
 
         line, color = tf.numpy_function(
             func=self.b_transforms,
@@ -90,7 +95,7 @@ class ColorizationTransforms(DraftTransforms):
             additional_targets={"image0": "image"},
         )
         self.draft_transforms = A.Compose(
-            A.Resize(draft_image, draft_image, interpolation=cv2.INTER_AREA),
+            [A.Resize(draft_image, draft_image, interpolation=cv2.INTER_AREA)],
             additional_targets={"image0": "image"},
         )
 
@@ -106,19 +111,16 @@ class ColorizationTransforms(DraftTransforms):
         hint = augmentations["image0"]
         return [line, line_draft, hint, color]
 
-    def __call__(
-        self, line_path: str, color_path: str
+    def preprocessing(
+        self, line: Tensor, color: Tensor
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-        line = self.image_load(line_path, 1)
-        color = self.image_load(color_path, 3)
-
         line, line_draft, hint, color = tf.numpy_function(
             func=self.b_transforms,
             inp=[line, color],
             Tout=[tf.uint8, tf.uint8, tf.uint8, tf.uint8],
         )
         line = self.cast(line)
-        line_draft = self.cast(line)
+        line_draft = self.cast(line_draft)
         hint = self.cast(hint)
         color = self.cast(color)
 
