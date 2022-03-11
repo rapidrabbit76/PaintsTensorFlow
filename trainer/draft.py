@@ -225,6 +225,7 @@ def image_save_to_logdir(logdir: str, image: Union[Tensor, np.ndarray]):
     tf.keras.utils.save_img(path, image, "channels_last")
 
 
+<<<<<<< HEAD
 def log_image(
     logger, images: List[Tensor], mode: Mode, max_image_count=8
 ) -> Tensor:
@@ -238,6 +239,19 @@ def log_image(
     ]
 
     images = tf.concat(images, 1)
+=======
+def log_images(images: List[Tensor], name: str, max_image_count=8) -> Tensor:
+    images = tf.concat(
+        [
+            (tf.concat([image] * 3, -1) if image.shape[-1] == 1 else image)
+            for image in images
+        ],
+        1,
+    )
+    images = (
+        images if len(images) <= max_image_count else images[max_image_count]
+    )
+>>>>>>> a4378950f9c0d7bcf03d64570c4eea1e5e05a32e
     image = tf.concat([image for image in images], 1)
     log_image = wandb.Image(image)
     logger.log({f"images/{mode.value}": log_image})

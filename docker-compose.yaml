@@ -2,7 +2,7 @@ version: '3.7'
 services:
   paints_tensorflow:
     build: .
-    user: "${USERID}:${GROUPID}"
     volumes:
       - .:/devel
+      - /DATASET/pixiv:/DATASET
     command: tail -f /dev/null
