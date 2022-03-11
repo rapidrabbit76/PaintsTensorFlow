@@ -1,7 +1,7 @@
 import argparse
 
 import wandb
-from trainer import draft_train
+from trainer import TRAINING_TABLE
 
 
 def main():
@@ -38,10 +38,9 @@ def main():
     logger = wandb.init(
         config=args,
         name=args.mode,
-        sync_tensorboard=True,
         save_code=True,
     )
-    trainer = draft_train
+    trainer = TRAINING_TABLE[args.mode]
     trainer(args, logger)
 
 
