@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  paints_tensorflow:
+    build: .
+    volumes:
+      - .:/devel
+      - /DATASET/pixiv:/DATASET
+    command: tail -f /dev/null

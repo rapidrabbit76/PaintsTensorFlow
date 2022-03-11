@@ -1,27 +1,23 @@
-## Training dir
-ckpt/
-log/
-testImages/
+## IDE
+.vscode/
 
-## model
+# TEST
+.testmondata
+
+## CACHE
+**/__pycache__/**
+
+# LOG
+wandb/
+experiment/
+
+# models
 *.h5
-*.data-*
-saved_model/PaintsTensorFlowDraftModel/
-saved_model/PaintsTensorFlowModel/
-GUI/src/saved_model/
-GUI/src/saved_model/PaintsTensorFlowDraftModel/
-GUI/src/saved_model/PaintsTensorFlowModel/
-GUI/src/saved_model/Liner/
+*.keras
 
+# DATASET
+DATASET
 
-
-chekpoint
-*.meta
-
-## etc
-/__pycache__
-/venv*
-/.idea
-/GUI/model/
-test.py
-Test/
+# ETC
+temp.py
+main.sh
