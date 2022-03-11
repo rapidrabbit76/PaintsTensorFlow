@@ -11,7 +11,7 @@ def test_draft_transforms(
     check_transfoms_shape(draft_transforms, draft_image_batch, draft_batch)
 
 
-def test_draft_transforms(
+def test_colorization_transforms(
     colorization_transforms: Callable,
     colorization_image_batch: Tuple[Tensor, Tensor],
     colorization_batch: Tuple[Tensor, Tensor, Tensor],
