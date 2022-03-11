@@ -1,6 +1,8 @@
 ## IDE
 .vscode/
 
+# TEST
+.testmondata
 
 ## CACHE
 **/__pycache__/**
