@@ -92,9 +92,7 @@ class Generator(Model):
         e7 = self.e7(e6, training)
         e8 = self.e8(e7, training)
 
-        print(e8.shape)
         d8 = self.d8(tf.concat([e7, e8], axis=-1), training)
-        print(d8.shape)
         x = self.d7(d8, training)
         d6 = self.d6(tf.concat([d8, x], axis=-1), training)
         x = self.d5(d6, training)
