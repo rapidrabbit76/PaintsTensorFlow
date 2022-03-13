@@ -1,5 +1,3 @@
-import os
-from glob import glob
 from typing import *
 from typing import Callable, List, Tuple
 
@@ -19,13 +17,10 @@ class DraftTransforms:
         train: Mode,
     ):
         super().__init__()
-        draft_image = image_size // draft_image_r
+        image_size = image_size // draft_image_r
         self.both_transforms = A.Compose(
             [
                 A.Resize(image_size, image_size, interpolation=cv2.INTER_AREA),
-                A.RandomResizedCrop(draft_image, draft_image, p=1)
-                if train is Mode.TRAIN
-                else A.Resize(draft_image, draft_image),
                 A.HorizontalFlip(p=0.5 if train is Mode.TRAIN else 0),
             ],
             additional_targets={"image0": "image"},
@@ -87,9 +82,6 @@ class ColorizationTransforms(DraftTransforms):
         self.both_transforms = A.Compose(
             [
                 A.Resize(image_size, image_size, interpolation=cv2.INTER_AREA),
-                A.RandomResizedCrop(image_size, image_size, p=1)
-                if train is Mode.TRAIN
-                else A.Resize(draft_image, draft_image),
                 A.HorizontalFlip(p=0.5 if train is Mode.TRAIN else 0),
             ],
             additional_targets={"image0": "image"},
@@ -100,7 +92,6 @@ class ColorizationTransforms(DraftTransforms):
         )
 
     def b_transforms(self, line, color):
-        super().b_transforms(line, color)
         data = {
             "image": line,
             "image0": color,
