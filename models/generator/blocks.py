@@ -7,12 +7,25 @@ from tensorflow.python.keras.layers import (
     Conv2DTranspose,
     LeakyReLU,
 )
-from tensorflow_addons.layers import InstanceNormalization
 
+from tensorflow.keras.layers import BatchNormalization
 
 __INITIALIZER__ = None
-Normalization = InstanceNormalization
+Normalization = BatchNormalization
 Activation = LeakyReLU
+
+
+class ReflectionPad2D(tf.keras.layers.Layer):
+    def __init__(self, paddings=(1, 1, 1, 1)):
+        super(ReflectionPad2D, self).__init__()
+        self.paddings = paddings
+
+    def call(self, input):
+        l, r, t, b = self.paddings
+
+        return tf.pad(
+            input, paddings=[[0, 0], [t, b], [l, r], [0, 0]], mode="REFLECT"
+        )
 
 
 class ConvBlock(Model):
@@ -26,14 +39,14 @@ class ConvBlock(Model):
     ) -> None:
         super().__init__()
         layer = [
+            ReflectionPad2D(),
             Conv2D(
                 outp,
                 k,
                 s,
-                padding="same",
                 kernel_initializer=__INITIALIZER__,
                 use_bias=False,
-            )
+            ),
         ]
         if norm:
             layer += [Normalization()]
@@ -63,7 +76,7 @@ class ConvUpBlock(Model):
                 padding="same",
                 kernel_initializer=__INITIALIZER__,
                 use_bias=False,
-            )
+            ),
         ]
         if norm:
             layer += [Normalization()]

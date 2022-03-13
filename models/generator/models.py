@@ -1,10 +1,10 @@
 from typing import *
 import tensorflow as tf
 from tensorflow import Tensor
-from tensorflow.python.keras import Model
+from tensorflow.python.keras import Model, Sequential
 from tensorflow.python.keras.layers import Conv2D
 
-from .blocks import ConvBlock, ConvUpBlock
+from .blocks import ConvBlock, ConvUpBlock, ReflectionPad2D
 
 
 class Generator(Model):
@@ -48,8 +48,11 @@ class Generator(Model):
             self.d1,
         ) = self._make_decoding_layers(decoding_layers[1:])
 
-        self.last = Conv2D(
-            3, 3, 1, padding="same", use_bias=False, activation=tf.nn.tanh
+        self.last = Sequential(
+            [
+                ReflectionPad2D(),
+                Conv2D(3, 3, 1, use_bias=False, activation=tf.nn.tanh),
+            ]
         )
 
     def _make_encoding_layers(self, layers: List[int]) -> List[Model]:
@@ -89,7 +92,9 @@ class Generator(Model):
         e7 = self.e7(e6, training)
         e8 = self.e8(e7, training)
 
+        print(e8.shape)
         d8 = self.d8(tf.concat([e7, e8], axis=-1), training)
+        print(d8.shape)
         x = self.d7(d8, training)
         d6 = self.d6(tf.concat([d8, x], axis=-1), training)
         x = self.d5(d6, training)
