@@ -3,7 +3,7 @@ from tensorflow import Tensor
 from tensorflow.python.keras import Model, Sequential
 from tensorflow.python.keras.layers import Dense, Flatten
 
-from .blocks import ConvBlock
+from models.generator import ConvBlock
 
 
 class Discriminator(Model):
