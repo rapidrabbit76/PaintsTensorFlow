@@ -10,7 +10,7 @@ def main():
     parser.add_argument("--project_name", type=str, default="PaintsTensorflow")
     parser.add_argument("--logdir", type=str, default="experiment")
     parser.add_argument("--mode", type=str, choices=["draft", "colorization"])
-    parser.add_argument("--draft_weights_path", type=str, default="")
+    parser.add_argument("--draft_weights_path", type=str, default="draft.h5")
 
     # data
     parser.add_argument("--root_dir", type=str)
