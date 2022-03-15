@@ -22,6 +22,10 @@ batch_type = Tuple[Tensor, Tensor, Tensor, Tensor]
 
 
 def colorization_train(args, wandb_run):
+    assert os.path.exists(
+        args.draft_weights_path
+    ), f"{args.draft_weights_path} not exists"
+
     global logger, X
     logger = wandb_run
     os.makedirs(os.path.join(logger.dir, "image"), exist_ok=True)
@@ -53,14 +57,14 @@ def colorization_train(args, wandb_run):
     line, line_draft, hint, color = test_batch
     mask = opt.mask_gen(list(hint.shape), X, 0)
     hint = hint * mask
-    test_batch = (line, hint, color)
+    test_batch = (line, line_draft, hint, color)
 
     ########################## model ##########################
     draft_image_size = args.image_size // args.draft_image_r
     draft_gen = Generator(args.g_dim)
     draft_gen(
         tf.zeros([1, draft_image_size, draft_image_size, 1]),
-        tf.zeros([1, draft_image_size, draft_image_size, 1]),
+        tf.zeros([1, draft_image_size, draft_image_size, 3]),
         training=False,
     )
     draft_gen.load_weights(args.draft_weights_path)
@@ -104,7 +108,7 @@ def training_loop(train_dataset, test_batch, draft_gen, gen, gen_optim):
         training_info = training_step(draft_gen, gen, gen_optim, batch)
 
         if batch_idx % 5 == 0:
-            log_dict = {"l1_loss", training_info["l1_loss"]}
+            log_dict = {"loss": training_info["l1_loss"]}
             logger.log(log_dict)
             pbar.set_description_str(
                 (
@@ -115,16 +119,17 @@ def training_loop(train_dataset, test_batch, draft_gen, gen, gen_optim):
 
         if batch_idx % 100 == 0 or batch_idx == last_batch_idx:
             test_info = test_step(test_batch, draft_gen, gen)
+            size = test_info["line"].shape[1]
             train_images = [
                 training_info["line"],
-                training_info["hint"],
+                tf.image.resize(training_info["hint"], (size, size)),
                 training_info["draft"],
                 training_info["color"],
                 training_info["_color"],
             ]
             test_images = [
                 test_info["line"],
-                test_info["hint"],
+                tf.image.resize(test_info["hint"], (size, size)),
                 test_info["draft_w_hint"],
                 test_info["draft_wo_hint"],
                 test_info["_color_w_hint"],
@@ -151,7 +156,7 @@ def training_step(
 
     with tf.GradientTape() as tape:
         _color = gen(line, draft, training=True)
-        loss = losses.l1_loss()
+        loss = losses.l1_loss(_color, color)
 
     grad = tape.gradient(loss, gen.trainable_variables)
     gen_optim.apply_gradients(zip(grad, gen.trainable_variables))
