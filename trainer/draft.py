@@ -157,7 +157,7 @@ def training_step(
     hint = hint * mask
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-        _color = gen(line, hint, training=True)
+        _color = gen({"line": line, "hint": hint, "training": True})
 
         logits = disc(color, training=True)
         _logits = disc(_color, training=True)
@@ -199,8 +199,8 @@ def test_step(test_batch: batch_type, gen: Generator) -> Dict[str, Tensor]:
     line, hint, color = test_batch
     zero_hint = tf.zeros_like(hint)
 
-    _color_w_hint = gen(line, hint, training=False)
-    _color_wo_hint = gen(line, zero_hint, training=False)
+    _color_w_hint = gen({"line": line, "hint": hint, "training": False})
+    _color_wo_hint = gen({"line": line, "hint": zero_hint, "training": False})
 
     return {
         # images

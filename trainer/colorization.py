@@ -155,7 +155,7 @@ def training_step(
     draft = build_draft(draft_gen, line_draft, hint, image_size)
 
     with tf.GradientTape() as tape:
-        _color = gen(line, draft, training=True)
+        _color = gen({"line": line, "hint": draft, "training": True})
         loss = losses.l1_loss(_color, color)
 
     grad = tape.gradient(loss, gen.trainable_variables)
@@ -180,7 +180,7 @@ def build_draft(
     hint: Tensor,
     size: int,
 ) -> Tensor:
-    draft = draft_gen(line_draft, hint, training=False)
+    draft = draft_gen({"line": line_draft, "hint": hint, "training": False})
     draft = tf.image.resize(
         draft, (size, size), method=tf.image.ResizeMethod.NEAREST_NEIGHBOR
     )
@@ -198,8 +198,12 @@ def test_step(
     draft_w_hint = build_draft(draft_gen, line_draft, hint, image_size)
     draft_wo_hint = build_draft(draft_gen, line_draft, zero_hint, image_size)
 
-    _color_w_hint = gen(line, draft_w_hint, training=False)
-    _color_wo_hint = gen(line, draft_wo_hint, training=False)
+    _color_w_hint = gen(
+        {"line": line, "hint": draft_w_hint, "training": False},
+    )
+    _color_wo_hint = gen(
+        {"line": line, "hint": draft_wo_hint, "training": False}
+    )
 
     hint = tf.image.resize(hint, (image_size, image_size))
     return {
