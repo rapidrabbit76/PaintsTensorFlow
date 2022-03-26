@@ -4,6 +4,10 @@ import wandb
 from trainer import TRAINING_TABLE
 
 
+def str2bool(v):
+    return v.lower() in ("yes", "y", "true", "t", "1")
+
+
 def main():
     parser = argparse.ArgumentParser()
     # project
@@ -31,6 +35,8 @@ def main():
     parser.add_argument("--beta_2", type=float, default=0.99)
     parser.add_argument("--mu", type=float, default=1)
     parser.add_argument("--sigma", type=float, default=0.005)
+    # logger
+    parser.add_argument("--upload_artifacts", action=str2bool, default=True)
 
     args = parser.parse_args()
 

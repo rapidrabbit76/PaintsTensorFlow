@@ -93,10 +93,12 @@ def colorization_train(args, wandb_run):
 
     #################### artifacts loging ######################
     artifacts_path = os.path.join(logger.dir, f"{args.mode}.h5")
-    gen.save_weights(artifacts_path)
-    gen_artifacts = wandb.Artifact(args.mode, type="model")
-    gen_artifacts.add_file(artifacts_path, "weight")
-    logger.log_artifact(gen_artifacts)
+    gen.save(artifacts_path)
+
+    if args.upload_artifacts:
+        gen_artifacts = wandb.Artifact(args.mode, type="model")
+        gen_artifacts.add_file(artifacts_path, "weight")
+        logger.log_artifact(gen_artifacts)
 
 
 def training_loop(train_dataset, test_batch, draft_gen, gen, gen_optim):
