@@ -1,4 +1,4 @@
-from typing import *
+from typing import List, Dict
 import tensorflow as tf
 from tensorflow import Tensor
 from tensorflow.python.keras import Model, Sequential
