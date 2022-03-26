@@ -1,3 +1,5 @@
+import os
+import tempfile
 import pytest
 from easydict import EasyDict
 
@@ -83,3 +85,20 @@ def colorization_batch(
     color = build_tensor(b, wh, 3)
     line_draft, hint, _ = draft_batch
     return (line, line_draft, hint, color)
+
+
+@pytest.fixture(scope="session")
+def save_dir():
+    return tempfile.TemporaryDirectory()
+
+
+@pytest.fixture(scope="session")
+def draft_model_save_path(save_dir):
+    save_dir = os.path.join(save_dir.name, "draft_model")
+    return save_dir
+
+
+@pytest.fixture(scope="session")
+def colorization_model_save_path(save_dir):
+    save_dir = os.path.join(save_dir.name, "colorization_model")
+    return save_dir
