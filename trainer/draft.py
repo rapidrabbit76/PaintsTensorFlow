@@ -87,6 +87,8 @@ def draft_train(args, wandb_run):
         training_loop(
             train_dataset, test_batch, gen, disc, gen_optim, disc_optim
         )
+        gen.save_weights(os.path.join(logger.dir, "gen.ckpt.h5"))
+        disc.save_weights(os.path.join(logger.dir, "disc.ckpt.h5"))
 
     #################### artifacts loging ######################
     artifacts_path = os.path.join(logger.dir, f"{args.mode}.h5")
