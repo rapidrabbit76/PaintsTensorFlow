@@ -28,8 +28,8 @@ class DraftTransforms:
 
     @classmethod
     def cast(cls, image: Tensor) -> Tensor:
-        image = tf.cast(image, tf.float32)
-        image = (image / 127.5) - 1
+        image = tf.cast(image, tf.float32) / 255
+        image = (image - 0.5) / 0.5
         return image
 
     @classmethod
