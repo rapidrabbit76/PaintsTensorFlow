@@ -85,22 +85,24 @@ def draft_train(args, wandb_run):
     for epoch in range(args.epochs):
         print(f"Epoch: {epoch} start")
         training_loop(
-            train_dataset, test_batch, gen, disc, gen_optim, disc_optim
+            train_dataset, test_batch, gen, disc, gen_optim, disc_optim, epoch
         )
-        gen.save_weights(os.path.join(logger.dir, "gen.ckpt.h5"))
-        disc.save_weights(os.path.join(logger.dir, "disc.ckpt.h5"))
+        gen.save_weights(os.path.join(logger.dir, f"gen.ckpt_E:{epoch}.h5"))
+        disc.save_weights(os.path.join(logger.dir, f"disc.ckpt_E:{epoch}.h5"))
 
     #################### artifacts loging ######################
-    artifacts_path = os.path.join(logger.dir, f"{args.mode}.h5")
+    artifacts_path = os.path.join(logger.dir, f"{args.mode}")
     gen.save(artifacts_path)
 
     if args.upload_artifacts:
         gen_artifacts = wandb.Artifact(args.mode, type="model")
-        gen_artifacts.add_file(artifacts_path, "weight")
+        gen_artifacts.add_dir(artifacts_path, "weight")
         logger.log_artifact(gen_artifacts)
 
 
-def training_loop(train_dataset, test_batch, gen, disc, gen_optim, disc_optim):
+def training_loop(
+    train_dataset, test_batch, gen, disc, gen_optim, disc_optim, epoch
+):
     global global_step
     last_batch_idx = len(train_dataset) - 1
     pbar = tqdm(train_dataset)
@@ -122,7 +124,8 @@ def training_loop(train_dataset, test_batch, gen, disc, gen_optim, disc_optim):
             logger.log(log_dict)
             pbar.set_description_str(
                 (
-                    f"[GS:{global_step} "
+                    f"[E:{epoch}] "
+                    f"[GS:{global_step}] "
                     f"[rp:{log_dict['gan/real_prob'].numpy().item(): 0.2f}] "
                     f"[fp:{log_dict['gan/fake_prob'].numpy().item(): 0.2f}] "
                     f"[l1:{log_dict['gen/l1_loss'].numpy().item(): 0.2f}]"
@@ -134,8 +137,8 @@ def training_loop(train_dataset, test_batch, gen, disc, gen_optim, disc_optim):
             train_images = [
                 training_info["line"],
                 training_info["hint"],
-                training_info["color"],
                 training_info["_color"],
+                training_info["color"],
             ]
             test_images = [
                 test_info["line"],
@@ -203,8 +206,8 @@ def test_step(test_batch: batch_type, gen: Generator) -> Dict[str, Tensor]:
     line, hint, color = test_batch
     zero_hint = tf.zeros_like(hint)
 
-    _color_w_hint = gen({"line": line, "hint": hint, "training": False})
-    _color_wo_hint = gen({"line": line, "hint": zero_hint, "training": False})
+    _color_w_hint = gen({"line": line, "hint": hint}, training=True)
+    _color_wo_hint = gen({"line": line, "hint": zero_hint}, training=True)
 
     return {
         # images
@@ -220,8 +223,7 @@ def log_step(
     logger, train_images: List[Tensor], test_images: List[Tensor]
 ) -> None:
     log_image(logger, train_images, Mode.TRAIN)
-    test_image = log_image(logger, test_images, Mode.TEST)
-    image_save_to_logdir(logger.dir, test_image)
+    log_image(logger, test_images, Mode.TEST)
 
 
 def image_save_to_logdir(logdir: str, image: Union[Tensor, np.ndarray]):
@@ -243,6 +245,6 @@ def log_image(
 
     images = tf.concat(images, 1)
     image = tf.concat([image for image in images], 1)
-    log_image = wandb.Image(image)
-    logger.log({f"images/{mode.value}": log_image})
+    image = wandb.Image(image)
+    logger.log({f"{mode.name}/Image": image})
     return image
