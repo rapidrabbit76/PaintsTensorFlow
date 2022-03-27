@@ -10,7 +10,7 @@ from tensorflow.python.keras.layers import (
 
 from tensorflow.keras.layers import BatchNormalization
 
-__INITIALIZER__ = None
+__INITIALIZER__ = tf.keras.initializers.HeNormal()
 Normalization = BatchNormalization
 Activation = LeakyReLU
 
@@ -54,7 +54,7 @@ class ConvBlock(Model):
             layer += [Activation(0.2)]
         self.block = Sequential(layer)
 
-    def call(self, x: Tensor, training: bool = None) -> Tensor:
+    def call(self, x: Tensor, training: bool = False) -> Tensor:
         return self.block(x, training=training)
 
 
@@ -84,5 +84,5 @@ class ConvUpBlock(Model):
             layer += [Activation(0.2)]
         self.block = Sequential(layer)
 
-    def call(self, x: Tensor, training: bool = None) -> Tensor:
+    def call(self, x: Tensor, training=False) -> Tensor:
         return self.block(x, training=training)
