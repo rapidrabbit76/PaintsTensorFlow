@@ -24,6 +24,3 @@ DATASET
 # ETC
 temp.py
 main.sh
-
-# Jupyter
-*.ipynb

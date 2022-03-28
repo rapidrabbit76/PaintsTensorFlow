@@ -3,5 +3,5 @@ tensorflow-addons==0.16.1
 opencv-python-headless==4.5.5.62 
 albumentations==1.1.0 
 scipy==1.8.0
-tqdm
+tqdm==4.61.2
 wandb==0.12.11
