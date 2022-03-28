@@ -14,6 +14,9 @@ experiment/
 # models
 *.h5
 *.keras
+src/onnx
+src/saved_model
+
 
 # DATASET
 DATASET
@@ -21,3 +24,6 @@ DATASET
 # ETC
 temp.py
 main.sh
+
+# Jupyter
+*.ipynb
