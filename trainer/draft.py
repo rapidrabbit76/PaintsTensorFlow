@@ -132,7 +132,7 @@ def training_loop(
                 ),
             )
 
-        if batch_idx % 100 == 0 or batch_idx == last_batch_idx:
+        if batch_idx % 500 == 0 or batch_idx == last_batch_idx:
             test_info = test_step(test_batch, gen)
             train_images = [
                 training_info["line"],
@@ -206,8 +206,8 @@ def test_step(test_batch: batch_type, gen: Generator) -> Dict[str, Tensor]:
     line, hint, color = test_batch
     zero_hint = tf.zeros_like(hint)
 
-    _color_w_hint = gen({"line": line, "hint": hint}, training=True)
-    _color_wo_hint = gen({"line": line, "hint": zero_hint}, training=True)
+    _color_w_hint = gen({"line": line, "hint": hint}, training=False)
+    _color_wo_hint = gen({"line": line, "hint": zero_hint}, training=False)
 
     return {
         # images

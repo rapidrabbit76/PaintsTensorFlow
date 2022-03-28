@@ -10,7 +10,7 @@ from tensorflow.python.keras.layers import (
 
 from tensorflow.keras.layers import BatchNormalization
 
-__INITIALIZER__ = tf.keras.initializers.HeNormal()
+__INITIALIZER__ = None
 Normalization = BatchNormalization
 Activation = LeakyReLU
 
