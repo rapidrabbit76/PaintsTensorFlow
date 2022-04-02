@@ -14,6 +14,9 @@ experiment/
 # models
 *.h5
 *.keras
+src/onnx
+src/saved_model
+
 
 # DATASET
 DATASET

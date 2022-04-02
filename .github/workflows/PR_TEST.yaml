@@ -27,11 +27,6 @@ jobs:
           pip install pytest pytest-testmon flake8 black easydict
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # Runs a set of commands using the runners shell
-      - name: Linting [flake8]
-        run: |
-          flake8 . --count --ignore=F403,F401,E241,E222,E251,E203,E266,F405
-
       - name: Run Pytest
         run: |
           pytest ./tests

@@ -80,25 +80,12 @@ class Generator(Model):
             ]
         return blocks
 
-    @tf.function(
-        input_signature=[
-            {
-                "line": tf.TensorSpec(
-                    shape=[1, None, None, 1], dtype=tf.float32
-                ),
-                "hint": tf.TensorSpec(
-                    shape=[1, None, None, 3], dtype=tf.float32
-                ),
-                "training": tf.TensorSpec(shape=[], dtype=tf.bool),
-            }
-        ]
-    )
-    def call(self, input_dict: Dict[str, Tensor]) -> Tensor:
+    @tf.function
+    def call(self, input_dict, training: bool = False) -> Tensor:
         line = input_dict["line"]
         hint = input_dict["hint"]
-        training = input_dict["training"]
-
         x = tf.concat([line, hint], axis=-1)
+
         e0 = self.e0(x, training)
         e1 = self.e1(e0, training)
         e2 = self.e2(e1, training)

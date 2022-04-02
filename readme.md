@@ -78,16 +78,22 @@ Click "RUN" to automatically color
 - tensorflow==2.7.1
 - tensorflow-addons==0.16.1
 - albumentations==1.1.0
+- opencv-python-headless==4.5.5.62 
 - scipy==1.8.0
+- tqdm==4.61.2
 - wandb==0.12.11
 
-# Install
+# Pretrained Model
+- draft saved_model [link](https://drive.google.com/drive/folders/1yKZ9gbVRznWP7ETowIqMbpZpveBh7Mhn?usp=sharing)
+- colorization saved_model [link](https://drive.google.com/drive/folders/1yKZ9gbVRznWP7ETowIqMbpZpveBh7Mhn?usp=sharing)
+- draft model onnx [link](https://drive.google.com/drive/folders/17A7db_zGxZllnlqjxf0_dkqIBeouACJa?usp=sharing)
+- colorization model onnx [link](https://drive.google.com/drive/folders/17A7db_zGxZllnlqjxf0_dkqIBeouACJa?usp=sharing)
 
 # Training
 
-- My datasets are over 700,000 images and i created a lines, using [SketchKeras](https://github.com/lllyasviel/sketchKeras)
+- My dataset over 700,000 images and created a lines, using [SketchKeras](https://github.com/lllyasviel/sketchKeras)
 
-- datasets path structure (**image-line file name must be matched**)
+- dataset path structure (**image-line file name must be matched**)
 
   ```
   {DATASET PATH}
@@ -125,6 +131,10 @@ Click "RUN" to automatically color
   --epochs={EPOCHS} \
   --lr=0.0001
   ```
+
+# Convert to ONNX
+
+- check "[convert2onnx.ipynb](./convert2onnx.ipynb)"
 
 # References
 
